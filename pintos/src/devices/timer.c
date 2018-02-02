@@ -39,7 +39,7 @@ timer_init (void)
 {
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
-  list_init(&sleeper_cells);
+  list_init(&sleeperCells);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -96,7 +96,7 @@ timer_sleep (int64_t ticks)
 
   if (ticks<=0)  return;
 
-  thread_current()->ticks = timer_ticks() + tick;
+  thread_current()->ticks = timer_ticks() + ticks;
  
   ASSERT (intr_get_level () == INTR_ON);
   
