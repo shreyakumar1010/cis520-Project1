@@ -10,13 +10,12 @@ Corey Vessar <coreyvessar@k-state.edu>
 
 ---- PRELIMINARIES ----
 
-Sources: 
-https://github.com/Hindol/pintos/blob/master/devices/timer.c
-https://knowledgejunk.net/2011/05/06/avoiding-busy-wait-in-timer_sleep-on-pintos/
-https://github.com/ilyanep/pintos-awesome/blob/master/src/devices/timer.c
-https://github.com/ryantimwilson/Pintos-Project-1/blob/master/src/threads/synch.c
-https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html#SEC8
-
+>>Sources: 
+   https://github.com/Hindol/pintos/blob/master/devices/timer.c
+   https://knowledgejunk.net/2011/05/06/avoiding-busy-wait-in-timer_sleep-on-pintos/
+   https://github.com/ilyanep/pintos-awesome/blob/master/src/devices/timer.c
+   https://github.com/ryantimwilson/Pintos-Project-1/blob/master/src/threads/synch.c
+   https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html#SEC8
 
 >> If you have any preliminary comments on your submission, notes for
 >> the TA, or extra credit, please give them here.
@@ -26,20 +25,39 @@ https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html#SEC8
                  ===========
 
 ---- DATA STRUCTURES ----
-We created a list named sleeperCells, which ...
-
 >> A1: Copy here the declaration of each new or changed `struct' or
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
+   static struct list sleeperCells
+        in timer.c
+	We created a static struct list named sleeperCells, which holds the list of 
+	sleeping threads. 
+
+   struct thread       
+        in thread.h 
+   	Added a int to keep track of the time to wakeup. Called time_to_wakeup. 
 
 ---- ALGORITHMS ----
-
 >> A2: Briefly describe what happens in a call to your timer_sleep(),
 >> including the effects of the timer interrupt handler.
 
+   When timer_sleep is called, first the argument is validated by checking that ticks is > 0. 
+   Then, it adds the global timer_ticks() to ticks, which is what was passed into the 
+   function when timer_sleep was called. This value is then assigned to the current thread's 
+   "time_to_wakeup". The handler then disables the interrupts by clearing the interrupt flag. 
+   After interrupts have been disabled,timer_sleep adds the current thread to the list of 
+   sleeping threads in a FCFS basis. After this, the interrupts are reenabled bythe interrupt 
+   handler setting the interrupt flag. 
+
+
 >> A3: What steps are taken to minimize the amount of time spent in
 >> the timer interrupt handler?
+
+   We only disabled the interrupts around the critical code. Also, using a list for just the
+   sleeping threads means that the handler isn't wasting its time with nonsleeping threads. 
+   Furthermore, using an ordered list makes it so that the handler isn't going through the 
+   entire list of sleeping threads.
 
 
 ---- SYNCHRONIZATION ----
