@@ -10,18 +10,23 @@ Corey Vessar <coreyvessar@k-state.edu>
 
 ---- PRELIMINARIES ----
 
+Sources: 
+https://github.com/Hindol/pintos/blob/master/devices/timer.c
+https://knowledgejunk.net/2011/05/06/avoiding-busy-wait-in-timer_sleep-on-pintos/
+https://github.com/ilyanep/pintos-awesome/blob/master/src/devices/timer.c
+https://github.com/ryantimwilson/Pintos-Project-1/blob/master/src/threads/synch.c
+https://web.stanford.edu/class/cs140/projects/pintos/pintos_1.html#SEC8
+
+
 >> If you have any preliminary comments on your submission, notes for
 >> the TA, or extra credit, please give them here.
-
->> Please cite any offline or online sources you consulted while
->> preparing your submission, other than the Pintos documentation,
->> course text, lecture notes, and course staff.
 
 
                  ALARM CLOCK
                  ===========
 
 ---- DATA STRUCTURES ----
+We created a list named sleeperCells, which ...
 
 >> A1: Copy here the declaration of each new or changed `struct' or
 >> `struct' member, global or static variable, `typedef', or
