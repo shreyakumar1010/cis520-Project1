@@ -17,8 +17,6 @@
 #error TIMER_FREQ <= 1000 recommended
 #endif
 
-/*List of speeing threads*/
-static struct list sleeperCells;
 /* Number of timer ticks since OS booted. */
 static int64_t ticks;
 
@@ -90,21 +88,15 @@ timer_elapsed (int64_t then)
 /* Sleeps for approximately TICKS timer ticks.  Interrupts must
    be turned on. */
 void
+
+/* THIS IS WHERE TO MAKE CHANGES*/
 timer_sleep (int64_t ticks) 
 {
   int64_t start = timer_ticks ();
 
-  if (ticks<=0)  return;
-
-  thread_current()->ticks = timer_ticks() + ticks;
- 
   ASSERT (intr_get_level () == INTR_ON);
-  
-  intr_disable();
-  list_insert_orderd (&timer_wait_list, &sleeperCells, less_wakeup, NULL);
-  intr_enable();
-
-  sema_down(thread_current()->timer_sema);
+ /* while (timer_elapsed (start) < ticks) 
+    thread_yield ();*/
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
