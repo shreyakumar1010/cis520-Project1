@@ -30,7 +30,7 @@ static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
-static struct list sleeperCells();
+static struct list sleeperCells;
 
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
@@ -98,7 +98,7 @@ timer_sleep (int64_t ticks)
   if (ticks<=0)
 	  return;
 
-  thread_current()-> timer_ticks() + ticks;
+  thread_current()->time_to_wakeup = timer_ticks() + ticks;
 
   ASSERT (intr_get_level () == INTR_ON);
   
