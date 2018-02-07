@@ -98,6 +98,8 @@ timer_sleep (int64_t ticks)
   if (ticks<=0)
 	  return;
 
+  thread_current()-> timer_ticks() + ticks;
+
   ASSERT (intr_get_level () == INTR_ON);
   
   intr_disable();
