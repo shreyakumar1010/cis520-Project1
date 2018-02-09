@@ -103,10 +103,10 @@ timer_sleep (int64_t ticks)
   ASSERT (intr_get_level () == INTR_ON);
   
   intr_disable();
-  list_insert_ordered(&timer_wait_list, &sleeperCells, less_wakeup, NULL);
+  list_insert_ordered(&sleeperCells, &thread_current-> sleeping_element, less_wakeup, NULL);
   intr_enable();
 
-  sema_down(thread_current-> timer_sema);
+  sema_down(thread_current-> timer_semaphore);
 
  /* while (timer_elapsed (start) < ticks) 
     thread_yield ();*/
