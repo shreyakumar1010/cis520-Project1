@@ -204,6 +204,28 @@ thread_create (const char *name, int priority,
   return tid;
 }
 
+
+bool lower_wakeuptime(const struct list_element *A, const struct list_elem *B, void *aux NO)
+{
+	const struct thread *threadA = list_entry(A, struct thread, sleeping_element);
+	const struct thread *threadB = list_entry(B, struct thread, sleeping_element);
+	if (threadA->time_to_wakeup != threadB->time_to_wakeup)
+	{
+		if (threadA->time_to_wakeup < threadB->time_to_wakeup)
+			return true;
+		else 
+			return false;
+	}
+	else
+	{
+		if (threadA -> priority > threadB->priority)
+			return true;
+		else 
+			return false;
+	}
+
+}
+
 /* Puts the current thread to sleep.  It will not be scheduled
    again until awoken by thread_unblock().
 
@@ -345,6 +367,8 @@ thread_get_priority (void)
   return thread_current ()->priority;
 }
 
+
+
 /* Sets the current thread's nice value to NICE. */
 void
 thread_set_nice (int nice UNUSED) 
@@ -467,6 +491,8 @@ init_thread (struct thread *t, const char *name, int priority)
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
   intr_set_level (old_level);
+
+  sema_init(&current_thread->timer_sem, 0);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

@@ -95,6 +95,9 @@ struct thread
   
   /*for timer sleep*/
   int64_t time_to_wakeup;
+  struct list_elem sleeping_element;
+  struct semaphore timer_sem;
+
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
