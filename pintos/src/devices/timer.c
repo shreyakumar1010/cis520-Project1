@@ -103,10 +103,10 @@ timer_sleep (int64_t ticks)
   ASSERT (intr_get_level () == INTR_ON);
   
   intr_disable();
-  list_insert_ordered(&sleeperCells, &thread_current-> sleeping_element, less_wakeup, NULL);
+  list_insert_ordered(&sleeperCells, &thread_current-> sleeping_element, lower_wakeuptime, NULL);
   intr_enable();
 
-  sema_down(thread_current-> timer_semaphore);
+  sema_down(&thread_current()-> timer_sem);
 
  /* while (timer_elapsed (start) < ticks) 
     thread_yield ();*/
@@ -186,8 +186,20 @@ timer_print_stats (void)
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
-  ticks++;
-  thread_tick ();
+	struct thread *t;
+	ticks++;
+	thread_tick ();
+	intr_disable ();
+	while (!list_empty (&sleeperCells))
+	{
+		t = list_entry (list_front (&sleeperCells), struct thread, sleeping_element)
+		if (ticks < t->time_to_wakeup)
+			break;
+		sema_up (&t->timer_sem);
+		list_pop_front (&sleeperCells);
+	}
+        intr_enable ();
+
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
