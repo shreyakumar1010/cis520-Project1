@@ -205,7 +205,7 @@ thread_create (const char *name, int priority,
 }
 
 
-bool lower_wakeuptime(const struct list_element *A, const struct list_elem *B, void *aux NO)
+bool lower_wakeuptime(const struct list_element *A, const struct list_elem *B, void *aux WEDONTUSE)
 {
 	const struct thread *threadA = list_entry(A, struct thread, sleeping_element);
 	const struct thread *threadB = list_entry(B, struct thread, sleeping_element);
