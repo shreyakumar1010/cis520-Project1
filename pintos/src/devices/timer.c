@@ -94,7 +94,7 @@ void
 /* THIS IS WHERE TO MAKE CHANGES*/
 timer_sleep (int64_t ticks) 
 {
-  int64_t start = timer_ticks ();
+  //int64_t start = timer_ticks ();
   if (ticks<=0)
 	  return;
 
@@ -103,7 +103,7 @@ timer_sleep (int64_t ticks)
   ASSERT (intr_get_level () == INTR_ON);
   
   intr_disable();
-  list_insert_ordered(&sleeperCells, &thread_current-> sleeping_element, lower_wakeuptime, NULL);
+  list_insert_ordered(&sleeperCells, &thread_current()-> sleeping_element, lower_wakeuptime, NULL);
   intr_enable();
 
   sema_down(&thread_current()-> timer_sem);
@@ -192,7 +192,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 	intr_disable ();
 	while (!list_empty (&sleeperCells))
 	{
-		t = list_entry (list_front (&sleeperCells), struct thread, sleeping_element)
+		t = list_entry (list_front (&sleeperCells), struct thread, sleeping_element);
 		if (ticks < t->time_to_wakeup)
 			break;
 		sema_up (&t->timer_sem);
