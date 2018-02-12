@@ -11,6 +11,8 @@ Corey Vessar <coreyvessar@k-state.edu>
 ---- PRELIMINARIES ----
 
 >>Sources: 
+   https://github.com/tssurya/Pintos_Project/blob/master/pintos/src/threads/fixed-point.h
+   https://github.com/casimirn/CIS520/blob/master/cis520/pintos/src/threads/Design1.txt
    https://github.com/Hindol/pintos/blob/master/devices/timer.c
    https://knowledgejunk.net/2011/05/06/avoiding-busy-wait-in-timer_sleep-on-pintos/
    https://github.com/ilyanep/pintos-awesome/blob/master/src/devices/timer.c
@@ -31,12 +33,18 @@ Corey Vessar <coreyvessar@k-state.edu>
 
    static struct list sleeperCells
         in timer.c
-	We created a static struct list named sleeperCells, which holds the list of 
-	sleeping threads. 
+		We created a static struct list named sleeperCells, which holds the list of 
+		sleeping threads. 
 
    struct thread       
         in thread.h 
-   	Added a int to keep track of the time to wakeup. Called time_to_wakeup. 
+   		Added a int to keep track of the time to wakeup. Called time_to_wakeup. 
+		Added a list_elem sleeping_element as a timer element (what is put in the list)
+		Added a semaphore timer_sem to use as a locking mechanism
+
+   bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void *aux UNUSED) 
+   	in thread.h
+		prototype description of the function added that compares wakeuptime of two elements
 
 ---- ALGORITHMS ----
 >> A2: Briefly describe what happens in a call to your timer_sleep(),
@@ -47,8 +55,8 @@ Corey Vessar <coreyvessar@k-state.edu>
    function when timer_sleep was called. This value is then assigned to the current thread's 
    "time_to_wakeup". The handler then disables the interrupts by clearing the interrupt flag. 
    After interrupts have been disabled,timer_sleep adds the current thread to the list of 
-   sleeping threads in a FCFS basis. After this, the interrupts are reenabled bythe interrupt 
-   handler setting the interrupt flag. 
+   sleeping threads in a FCFS basis. After this, the interrupts are reenabled by the interrupt 
+   handler setting the interrupt flag. //FIX END HERE
 
 
 >> A3: What steps are taken to minimize the amount of time spent in
