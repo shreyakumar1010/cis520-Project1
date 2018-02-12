@@ -198,7 +198,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 		sema_up (&t->timer_sem);
 		list_pop_front (&sleeperCells);
 	}
-        intr_enable ();
+        intr_disable ();
 
 }
 
