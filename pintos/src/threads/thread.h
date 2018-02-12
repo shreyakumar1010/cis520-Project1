@@ -137,6 +137,8 @@ void thread_yield (void);
 /* Performs some operation on thread t, given auxiliary data AUX. */
 typedef void thread_action_func (struct thread *t, void *aux);
 void thread_foreach (thread_action_func *, void *);
+/* compares wakeuptime between threads, used to orders lists in timer.c*/
+bool lower_wakeuptime(const struct list_element *A, const struct list_elem *B);
 
 int thread_get_priority (void);
 void thread_set_priority (int);
