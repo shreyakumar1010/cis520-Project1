@@ -204,7 +204,11 @@ thread_create (const char *name, int priority,
   return tid;
 }
 
-
+/* Compares the time_to_wakeup of two threads, A and B. If they have the same time_to_wakeup, 
+then the tie is broken by priority (if A's priority is higher than B's, then returns true, else returns false).
+If they don't have the same time_to_wakeup, then it returns true if A's time is less than B's and false if B's
+time is less than A's
+*/
 bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void *aux UNUSED)
 {
 	const struct thread *threadA = list_entry(A, struct thread, sleeping_element);
