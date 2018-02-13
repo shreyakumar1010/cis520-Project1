@@ -222,7 +222,7 @@ bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void
 	}
 	else
 	{
-		if (threadA -> priority > threadB->priority)
+		if (threadA->priority > threadB->priority)
 			return true;
 		else 
 			return false;
