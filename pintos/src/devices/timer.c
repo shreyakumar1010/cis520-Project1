@@ -101,12 +101,12 @@ timer_sleep (int64_t ticks)
   thread_current()->time_to_wakeup = timer_ticks() + ticks;
 
   ASSERT (intr_get_level () == INTR_ON);
-  
-  intr_disable();
+  enum intr_level old_level = intr_disable ();
+	
   list_insert_ordered(&sleeperCells, &thread_current()-> sleeping_element, lower_wakeuptime, NULL);
-  intr_enable();
 
   sema_down(&thread_current()-> timer_sem);
+  intr_set_level(old_level);
 
  /* while (timer_elapsed (start) < ticks) 
     thread_yield ();*/
