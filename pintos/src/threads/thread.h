@@ -101,7 +101,8 @@ struct thread
   
   int initial_priority; // initial priority
   struct lock * waiting_for; //lock we're waiting on
-
+  struct list list_of_priority_donations; //Contains threads that are able to  donate priority
+  struct list_elem donated_elem; //The element that gets inserted into the donation list
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
