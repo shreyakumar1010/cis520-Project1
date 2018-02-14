@@ -100,7 +100,7 @@ struct thread
   struct semaphore timer_sem;
   
   int initial_priority; // initial priority
-  struct lock * waiting_for //lock we're waiting on
+  struct lock * waiting_for; //lock we're waiting on
 
 
 #ifdef USERPROG
