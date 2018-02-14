@@ -595,6 +595,14 @@ schedule (void)
   thread_schedule_tail (prev);
 }
 
+/* interrupts are off, essentially just changes the priority*/
+static void thread_change_priority(struct thread * tochange)
+{
+	ASSERT(intr_get_level()==INTR_OFF); 
+	list_remove(&tochange->elem);
+    	list_insert_ordered(&ready_list, &tochange->elem, higher_priority_cmp, NULL);
+}
+
 /* Returns a tid to use for a new thread. */
 static tid_t
 allocate_tid (void) 
