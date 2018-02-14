@@ -189,7 +189,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 	struct thread *t;
 	ticks++;
 	thread_tick ();
-	intr_disable ();
+	enum intr_level old_level = intr_disable ();
 	while (!list_empty (&sleeperCells))
 	{
 		t = list_entry (list_front (&sleeperCells), struct thread, sleeping_element);
@@ -198,7 +198,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 		sema_up (&t->timer_sem);
 		list_pop_front (&sleeperCells);
 	}
-        intr_disable ();
+        intr_set_level (old_level);
 
 }
 
