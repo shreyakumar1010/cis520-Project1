@@ -95,10 +95,12 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
   
-  /*for timer sleep*/
   int64_t time_to_wakeup;
   struct list_elem sleeping_element;
   struct semaphore timer_sem;
+  
+  int initial_priority; // initial priority
+  struct lock * waiting_for //lock we're waiting on
 
 
 #ifdef USERPROG
