@@ -204,31 +204,7 @@ thread_create (const char *name, int priority,
   return tid;
 }
 
-/* Compares the time_to_wakeup of two threads, A and B. If they have the same time_to_wakeup, 
-then the tie is broken by priority (if A's priority is higher than B's, then returns true, else returns false).
-If they don't have the same time_to_wakeup, then it returns true if A's time is less than B's and false if B's
-time is less than A's
-*/
-bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void *aux UNUSED)
-{
-	const struct thread *threadA = list_entry(A, struct thread, sleeping_element);
-	const struct thread *threadB = list_entry(B, struct thread, sleeping_element);
-	if (threadA->time_to_wakeup != threadB->time_to_wakeup)
-	{
-		if (threadA->time_to_wakeup < threadB->time_to_wakeup)
-			return true;
-		else 
-			return false;
-	}
-	else
-	{
-		if (threadA->priority > threadB->priority)
-			return true;
-		else 
-			return false;
-	}
-
-}
+/
 
 /* Puts the current thread to sleep.  It will not be scheduled
    again until awoken by thread_unblock().
@@ -263,7 +239,9 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  
+  list_insert_ordered(&ready_list, &t->elem, true_if_higher_priority, NULL);
+	
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -334,7 +312,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+    list_insert_ordered (&ready_list, &cur->elem, true_if_higher_priority, NULL);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -491,6 +469,9 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  
+  t-> initial_priority = priority;
+  list_init(&t-> list_of_priority_dontaions);
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
@@ -595,6 +576,32 @@ schedule (void)
   thread_schedule_tail (prev);
 }
 
+* Compares the time_to_wakeup of two threads, A and B. If they have the same time_to_wakeup, 
+then the tie is broken by priority (if A's priority is higher than B's, then returns true, else returns false).
+If they don't have the same time_to_wakeup, then it returns true if A's time is less than B's and false if B's
+time is less than A's
+*/
+bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void *aux UNUSED)
+{
+	const struct thread *threadA = list_entry(A, struct thread, sleeping_element);
+	const struct thread *threadB = list_entry(B, struct thread, sleeping_element);
+	if (threadA->time_to_wakeup != threadB->time_to_wakeup)
+	{
+		if (threadA->time_to_wakeup < threadB->time_to_wakeup)
+			return true;
+		else 
+			return false;
+	}
+	else
+	{
+		if (threadA->priority > threadB->priority)
+			return true;
+		else 
+			return false;
+	}
+
+}
+
 /* interrupts are off, essentially just changes the priority*/
 static void remove_and_insert_thread_after_priority_change(struct thread * tochange)
 {
@@ -620,3 +627,92 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+bool true_if_a_higher_priority(const struct list_elem *A, const struct list_elem *B)
+{
+  struct thread *threadA = list_entry(A, struct thread, elem);
+  struct thread *threadB = list_entry(B, struct thread, elem);
+  
+  if (threadA->priority > threadB->priority) {return true;}
+  else return false;
+}
+
+void donate_priority(struct thread *t)
+{
+  int numNestedDonation =0;
+  while(numNestedDonation <= MAX_NESTED_DONATION_LEVEL)//loop through for nested donations
+  {     
+    //maybe check to be sure the thread priority is set and determined
+    
+    //  if this thread is locked to another thread
+    if(t->waiting_for != NULL) 
+    {
+      //selects thread that is being waited for aka the one holding the lock
+      struct thread *threadHoldingLock = t->waiting_for->holder;
+      // if this is not the current thread then it has already donated, we should undo that donation
+      /*if(thread_current()!=t)
+      {
+        undo_donation(t); //NEED TO IMPLEMENT THIS FUNCTION
+      }  THIS IS WHERE ERRORS MIGHT OCCUR WITH NESTING                                   */
+      //priority change happens in calculate_and_set_priority
+      if(threadHoldingLock != NULL)
+      {
+        calculate_and_set_priority(threadHoldingLock);   //IMPLEMENT     
+        
+        //add this donation to the list_of_priority_donations
+        list_insert_ordered(&threadHoldingLock->list_of_priority_donataions, true_if_a_higher_priority, NULL);
+
+        //now set t to be the threadHoldingLock to nest
+        t = threadHoldingLock;
+
+        //increment numNestedDonations
+        numNestedDonation++;
+      }
+      else {break;} // threadHoldingLock is NULL
+    }
+    else {break;} //thread has no threadHoldingLock
+    
+  }
+  
+}
+
+static int calculate_and_set_priority(struct thread *t)
+{
+  int return_priority = -1; //initialized return priority to negative 1
+
+  enum intr_level old_level = intr_disable();
+  
+  if(!list_empty(t->list_of_priority_donataions)) //if the list is not empty
+  {
+    //the top element of the donation list should have the highest return_priority
+    struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donataions), struct thread, donated_elem);
+    topOfDonationList-> priority = return_priority;
+    
+  }
+
+  //now we determine if the dontated priority is higher than the initial priority
+  if(return_priority > t->inital_priority)
+  {
+    t->priority = return_priority;
+    
+  }
+  else
+  {
+    t->priority = initial_priority;
+    return_priority = priority;
+  }
+  
+  remove_and_insert_thread_after_priority_change(t);
+  int_set_level(old_level);
+
+  return return_priority;
+}
+
+/*undo_donation(struct thread *t)
+{
+  //should only be called with interrupts off
+  if(!list_empty(&t->list_of_priority_donations)) // if list of donations if not empty
+  {
+    
+  }
+} */
