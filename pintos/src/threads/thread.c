@@ -716,3 +716,14 @@ static int calculate_and_set_priority(struct thread *t)
     
   }
 } */
+void yield_thread_if_no_longer_max(void)
+{
+   //struct thread *cur = thread_current();
+   //struct thread *top = list_entry(list_front(&ready_list));
+   if( thread_current() -> priority > list_entry(list_front(&ready_list)-> priority)
+   {
+     thread_yield();
+   }
+
+}
+
