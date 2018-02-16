@@ -472,10 +472,11 @@ static void * alloc_frame (struct thread *t, size_t size)
 static struct thread *next_thread_to_run (void) 
 {
   if (list_empty (&ready_list))
-	  printf("list empty idle");
-    return idle_thread;
-  else
-    return list_entry (list_pop_front (&ready_list), struct thread, elem);
+  {  printf("list empty idle");
+    return idle_thread;}
+  else{
+	  printf("not empty");
+    return list_entry (list_pop_front (&ready_list), struct thread, elem);}
 }
 
 
