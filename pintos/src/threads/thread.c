@@ -692,3 +692,15 @@ void yield_thread_if_no_longer_max(void)
 
 }
 
+void thread_set_nice(int nice UNUSED)
+{}
+
+int thread_get_nice(void)
+{return 0;}
+
+int thread_get_load_avg(void)
+{return 0;}
+
+int thread_get_recent_cpu(void)
+{return 0;}
+
