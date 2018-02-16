@@ -654,10 +654,10 @@ static int calculate_and_set_priority(struct thread *t)
 
   enum intr_level old_level = intr_disable();
   
-  if(!list_empty(t->list_of_priority_donataions)) //if the list is not empty
+  if(!list_empty(t->list_of_priority_donations)) //if the list is not empty
   {
     //the top element of the donation list should have the highest return_priority
-    struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donataions), struct thread, donated_elem);
+    struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donations), struct thread, donated_elem);
     topOfDonationList-> priority = return_priority;
     
   }
