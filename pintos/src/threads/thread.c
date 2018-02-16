@@ -685,7 +685,7 @@ void yield_thread_if_no_longer_max(void)
 {
    //struct thread *cur = thread_current();
    //struct thread *top = list_entry(list_front(&ready_list));
-   if( thread_current() -> priority > list_entry(list_begin(&ready_list), struct thread, elem)-> priority)
+   if( (thread_current() -> priority) > (list_entry(list_begin(&ready_list), struct thread, elem)-> priority))
    {
      thread_yield();
    }
