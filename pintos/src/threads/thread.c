@@ -337,7 +337,7 @@ void thread_foreach (thread_action_func *func, void *aux)
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
+  thread_current ()->initial_priority = new_priority;
   calculate_and_set_priority(thread_current());
   yield_thread_if_no_longer_max();
 }
@@ -680,11 +680,9 @@ int calculate_and_set_priority(struct thread *t)
   
   if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
   {
-	  printf("list not empty\n");
     //the top element of the donation list should have the highest return_priority
     struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donations), struct thread, donated_elem);
     return_priority = topOfDonationList-> priority;
-	  printf("priority is = ");printf(return_priority);printf("\n");
     
   }
 
@@ -696,9 +694,7 @@ int calculate_and_set_priority(struct thread *t)
   }
   else
   {
-	  //printf("return priority not greater\n");
     t->priority = t->initial_priority;
-    return_priority = t->priority;
   }
   	printf("should remove and reinsert with priority change \n");
   remove_and_insert_thread_after_priority_change(t);
