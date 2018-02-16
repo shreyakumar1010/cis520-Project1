@@ -291,7 +291,7 @@ void thread_exit (void)
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
-  printf("THREAD EXIT");
+  //printf("THREAD EXIT");
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
@@ -577,7 +577,7 @@ void remove_and_insert_thread_after_priority_change(struct thread * tochange)
 	if(tochange->status == THREAD_READY)
 	{
 		ASSERT(intr_get_level()==INTR_OFF); 
-		printf("REMOVE_AND_INSERT_THREAD_AFTER_PRIORITY_CHANGE");
+		//printf("REMOVE_AND_INSERT_THREAD_AFTER_PRIORITY_CHANGE");
 		list_remove(&tochange->elem);
     		list_insert_ordered(&ready_list, &tochange->elem, (list_less_func *) &true_if_higher_priority, NULL);
 	}
@@ -638,7 +638,7 @@ void donate_priority(struct thread *t)
 
       if(t-> waiting_for == thread_current()->waiting_for)
       {
-	    printf("DONATE PRIORITY");
+	    //printf("DONATE PRIORITY");
         list_remove(item_in_list);
       }
       item_in_list = next_elem;
