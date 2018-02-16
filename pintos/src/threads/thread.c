@@ -59,6 +59,8 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
 
+static int MAX_NESTED_DONATION_LEVEL = 8;
+
 static void kernel_thread (thread_func *, void *aux);
 
 static void idle (void *aux UNUSED);
@@ -629,7 +631,7 @@ void donate_priority(struct thread *t)
         calculate_and_set_priority(threadHoldingLock);   //IMPLEMENT     
         
         //add this donation to the list_of_priority_donations
-        list_insert_ordered(&threadHoldingLock->list_of_priority_donataions, true_if_a_higher_priority, NULL);
+        list_insert_ordered(&threadHoldingLock->list_of_priority_donations, true_if_a_higher_priority, NULL);
 
         //now set t to be the threadHoldingLock to nest
         t = threadHoldingLock;
