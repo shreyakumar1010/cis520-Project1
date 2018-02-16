@@ -71,7 +71,7 @@ void sema_down (struct semaphore *sema)
       //i dont know if we actually have to have priority dontations for semaphores
       donate_priority(thread_current());
       //list_push_back (&sema->waiters, &thread_current ()->elem); //This will no longer be used
-     list_insert_ordered(&sema->waiters, &thread_current()->elem, rank_sema_priority, NULL); 
+     list_insert_ordered(&sema->waiters, &thread_current()->elem,  (list_less_func *) &rank_sema_priority, NULL); 
      
      thread_block ();
     }
@@ -121,7 +121,7 @@ void sema_up (struct semaphore *sema)
   if (!list_empty (&sema->waiters)) 
   { 
     // Sort the list
-    list_sort(&sema->waiters, rank_sema_priority, NULL);
+    list_sort(&sema->waiters,  (list_less_func *) &rank_sema_priority, NULL);
     thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
   sema->value++;
