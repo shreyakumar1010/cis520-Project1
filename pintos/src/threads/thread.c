@@ -338,6 +338,8 @@ void thread_foreach (thread_action_func *func, void *aux)
 void thread_set_priority (int new_priority) 
 {
   thread_current ()->priority = new_priority;
+  calculate_and_set_priority(thread_current());
+  yield_thread_if_no_longer_max();
 }
 
 
