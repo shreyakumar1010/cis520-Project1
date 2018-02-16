@@ -10,6 +10,7 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "devices/timer.h"
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
@@ -169,8 +170,8 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   struct kernel_thread_frame *kf;
   struct switch_entry_frame *ef;
   struct switch_threads_frame *sf;
-  tid_t tid;
-
+  tid_t tid;	
+	
   ASSERT (function != NULL);
 
   /* Allocate thread. */
@@ -181,6 +182,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   /* Initialize thread. */
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
+	enum intr_level old level = intr_disable();
 
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
@@ -196,10 +198,11 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   sf = alloc_frame (t, sizeof *sf);
   sf->eip = switch_entry;
   sf->ebp = 0;
+	intr_set_level(old_level);
 
   /* Add to run queue. */
   thread_unblock (t);
-
+  yield_thread_if_no_longer_max();
   return tid;
 }
 
@@ -429,7 +432,7 @@ static bool is_thread (struct thread *t)
    NAME. */
 static void init_thread (struct thread *t, const char *name, int priority)
 {
-  enum intr_level old_level;
+  //enum intr_level old_level;
 
   ASSERT (t != NULL);
   ASSERT (PRI_MIN <= priority && priority <= PRI_MAX);
@@ -445,9 +448,9 @@ static void init_thread (struct thread *t, const char *name, int priority)
   t-> initial_priority = priority;
   list_init(&t-> list_of_priority_donations);
 
-  old_level = intr_disable ();
+  //old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
-  intr_set_level (old_level);
+  //intr_set_level (old_level);
 
   sema_init(&t->timer_sem, 0);
 }
