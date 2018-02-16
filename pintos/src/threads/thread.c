@@ -676,9 +676,11 @@ int calculate_and_set_priority(struct thread *t)
   int return_priority = -1; //initialized return priority to negative 1
 
   enum intr_level old_level = intr_disable();
+  	printf("interrupts disabled");
   
   if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
   {
+	  printf("list not empty");
     //the top element of the donation list should have the highest return_priority
     struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donations), struct thread, donated_elem);
     topOfDonationList-> priority = return_priority;
@@ -688,18 +690,20 @@ int calculate_and_set_priority(struct thread *t)
   //now we determine if the dontated priority is higher than the initial priority
   if(return_priority > t->initial_priority)
   {
+	  printf("return priority greater than initial");
     t->priority = return_priority;
-    
   }
   else
   {
+	  printf("return priority not greater");
     t->priority = t->initial_priority;
     return_priority = t->priority;
   }
-  
+  	printf("should remove and reinsert with priority change");
   remove_and_insert_thread_after_priority_change(t);
+	printf("inserted should have worked");
   intr_set_level(old_level);
-
+	printf("interrupts toggled");
   return return_priority;
 }
 
