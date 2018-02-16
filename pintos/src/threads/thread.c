@@ -639,7 +639,7 @@ void donate_priority(struct thread *t)
       item_in_list = next_elem;
 } 
       }  //THIS IS WHERE ERRORS MIGHT OCCUR WITH NESTING  
-      */
+     
 	    
       //priority change happens in calculate_and_set_priority
       if(threadHoldingLock != NULL)
