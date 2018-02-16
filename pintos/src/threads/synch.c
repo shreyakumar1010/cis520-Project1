@@ -41,14 +41,14 @@
 
    - up or "V": increment the value (and wake up one waiting
      thread, if any). */
-void
-sema_init (struct semaphore *sema, unsigned value) 
+void sema_init (struct semaphore *sema, unsigned value) 
 {
   ASSERT (sema != NULL);
 
   sema->value = value;
   list_init (&sema->waiters);
 }
+
 
 /* Down or "P" operation on a semaphore.  Waits for SEMA's value
    to become positive and then atomically decrements it.
@@ -57,8 +57,7 @@ sema_init (struct semaphore *sema, unsigned value)
    interrupt handler.  This function may be called with
    interrupts disabled, but if it sleeps then the next scheduled
    thread will probably turn interrupts back on. */
-void
-sema_down (struct semaphore *sema) 
+void sema_down (struct semaphore *sema) 
 {
   enum intr_level old_level;
 
@@ -79,13 +78,13 @@ sema_down (struct semaphore *sema)
   intr_set_level (old_level);
 }
 
+
 /* Down or "P" operation on a semaphore, but only if the
    semaphore is not already 0.  Returns true if the semaphore is
    decremented, false otherwise.
 
    This function may be called from an interrupt handler. */
-bool
-sema_try_down (struct semaphore *sema) 
+bool sema_try_down (struct semaphore *sema) 
 {
   enum intr_level old_level;
   bool success;
@@ -105,12 +104,12 @@ sema_try_down (struct semaphore *sema)
   return success;
 }
 
+
 /* Up or "V" operation on a semaphore.  Increments SEMA's value
    and wakes up one thread of those waiting for SEMA, if any.
 
    This function may be called from an interrupt handler. */
-void
-sema_up (struct semaphore *sema) 
+void sema_up (struct semaphore *sema) 
 {
   enum intr_level old_level;
 
@@ -118,28 +117,28 @@ sema_up (struct semaphore *sema)
 
   old_level = intr_disable ();
    
-   
-   
   if (!list_empty (&sema->waiters)) 
   { 
-     //Sort the list
+    // Sort the list
     list_sort(&sema->waiters, true_if_higher_priority, NULL);
     thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
   sema->value++;
    
-   yield_thread_if_no_longer_max();//top thread could no longer be the highest priority thread
+  yield_thread_if_no_longer_max();
+  //top thread could no longer be the highest priority thread
    
   intr_set_level (old_level);
 }
 
+
 static void sema_test_helper (void *sema_);
+
 
 /* Self-test for semaphores that makes control "ping-pong"
    between a pair of threads.  Insert calls to printf() to see
    what's going on. */
-void
-sema_self_test (void) 
+void sema_self_test (void) 
 {
   struct semaphore sema[2];
   int i;
@@ -156,9 +155,9 @@ sema_self_test (void)
   printf ("done.\n");
 }
 
+
 /* Thread function used by sema_self_test(). */
-static void
-sema_test_helper (void *sema_) 
+static void sema_test_helper (void *sema_) 
 {
   struct semaphore *sema = sema_;
   int i;
@@ -169,7 +168,9 @@ sema_test_helper (void *sema_)
       sema_up (&sema[1]);
     }
 }
-
+//
+
+
 /* Initializes LOCK.  A lock can be held by at most a single
    thread at any given time.  Our locks are not "recursive", that
    is, it is an error for the thread currently holding a lock to
@@ -185,14 +186,14 @@ sema_test_helper (void *sema_)
    acquire and release it.  When these restrictions prove
    onerous, it's a good sign that a semaphore should be used,
    instead of a lock. */
-void
-lock_init (struct lock *lock)
+void lock_init (struct lock *lock)
 {
   ASSERT (lock != NULL);
 
   lock->holder = NULL;
   sema_init (&lock->semaphore, 1);
 }
+
 
 /* Acquires LOCK, sleeping until it becomes available if
    necessary.  The lock must not already be held by the current
@@ -202,8 +203,7 @@ lock_init (struct lock *lock)
    interrupt handler.  This function may be called with
    interrupts disabled, but interrupts will be turned back on if
    we need to sleep. */
-void
-lock_acquire (struct lock *lock)
+void lock_acquire (struct lock *lock)
 {
   ASSERT (lock != NULL);
   ASSERT (!intr_context ());
@@ -211,8 +211,8 @@ lock_acquire (struct lock *lock)
    
    enum intr_level old_level = intr_disable();
    
-   //if the lock is being held we need to donate
-   if(lock->holder!=NULL)
+  // if the lock is being held we need to donate
+  if(lock->holder!=NULL)
    {
       thread_current()->waiting_for = lock;
       donate_priority(current_thread());
@@ -221,9 +221,10 @@ lock_acquire (struct lock *lock)
 
   sema_down (&lock->semaphore);
   lock->holder = thread_current ();
-   //release the lock
+  // release the lock
   // thread_current()->waiting_for = NULL;   THIS LINE MIGHT BE NEEDED UNSURE
 }
+
 
 /* Tries to acquires LOCK and returns true if successful or false
    on failure.  The lock must not already be held by the current
@@ -231,8 +232,7 @@ lock_acquire (struct lock *lock)
 
    This function will not sleep, so it may be called within an
    interrupt handler. */
-bool
-lock_try_acquire (struct lock *lock)
+bool lock_try_acquire (struct lock *lock)
 {
   bool success;
 
@@ -245,13 +245,13 @@ lock_try_acquire (struct lock *lock)
   return success;
 }
 
+
 /* Releases LOCK, which must be owned by the current thread.
 
    An interrupt handler cannot acquire a lock, so it does not
    make sense to try to release a lock within an interrupt
    handler. */
-void
-lock_release (struct lock *lock) 
+void lock_release (struct lock *lock) 
 {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
@@ -260,34 +260,37 @@ lock_release (struct lock *lock)
   sema_up (&lock->semaphore);
 }
 
+
 /* Returns true if the current thread holds LOCK, false
    otherwise.  (Note that testing whether some other thread holds
    a lock would be racy.) */
-bool
-lock_held_by_current_thread (const struct lock *lock) 
+bool lock_held_by_current_thread (const struct lock *lock) 
 {
   ASSERT (lock != NULL);
 
   return lock->holder == thread_current ();
 }
-
+//
+
+
 /* One semaphore in a list. */
 struct semaphore_elem 
-  {
+{
     struct list_elem elem;              /* List element. */
     struct semaphore semaphore;         /* This semaphore. */
-  };
+};
+
 
 /* Initializes condition variable COND.  A condition variable
    allows one piece of code to signal a condition and cooperating
    code to receive the signal and act upon it. */
-void
-cond_init (struct condition *cond)
+void cond_init (struct condition *cond)
 {
   ASSERT (cond != NULL);
 
   list_init (&cond->waiters);
 }
+
 
 /* Atomically releases LOCK and waits for COND to be signaled by
    some other piece of code.  After COND is signaled, LOCK is
@@ -309,8 +312,7 @@ cond_init (struct condition *cond)
    interrupt handler.  This function may be called with
    interrupts disabled, but interrupts will be turned back on if
    we need to sleep. */
-void
-cond_wait (struct condition *cond, struct lock *lock) 
+void cond_wait (struct condition *cond, struct lock *lock) 
 {
   struct semaphore_elem waiter;
 
@@ -326,6 +328,7 @@ cond_wait (struct condition *cond, struct lock *lock)
   lock_acquire (lock);
 }
 
+
 /* If any threads are waiting on COND (protected by LOCK), then
    this function signals one of them to wake up from its wait.
    LOCK must be held before calling this function.
@@ -333,8 +336,7 @@ cond_wait (struct condition *cond, struct lock *lock)
    An interrupt handler cannot acquire a lock, so it does not
    make sense to try to signal a condition variable within an
    interrupt handler. */
-void
-cond_signal (struct condition *cond, struct lock *lock UNUSED) 
+void cond_signal (struct condition *cond, struct lock *lock UNUSED) 
 {
   ASSERT (cond != NULL);
   ASSERT (lock != NULL);
@@ -346,14 +348,14 @@ cond_signal (struct condition *cond, struct lock *lock UNUSED)
                           struct semaphore_elem, elem)->semaphore);
 }
 
+
 /* Wakes up all threads, if any, waiting on COND (protected by
    LOCK).  LOCK must be held before calling this function.
 
    An interrupt handler cannot acquire a lock, so it does not
    make sense to try to signal a condition variable within an
    interrupt handler. */
-void
-cond_broadcast (struct condition *cond, struct lock *lock) 
+void cond_broadcast (struct condition *cond, struct lock *lock) 
 {
   ASSERT (cond != NULL);
   ASSERT (lock != NULL);
@@ -361,3 +363,4 @@ cond_broadcast (struct condition *cond, struct lock *lock)
   while (!list_empty (&cond->waiters))
     cond_signal (cond, lock);
 }
+
