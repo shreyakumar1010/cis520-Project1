@@ -223,7 +223,8 @@ void lock_acquire (struct lock *lock)
   sema_down (&lock->semaphore);
   lock->holder = thread_current ();
   // release the lock
-  // thread_current()->waiting_for = NULL;   THIS LINE MIGHT BE NEEDED UNSURE
+   thread_current()->waiting_for = NULL;  // THIS LINE MIGHT BE NEEDED UNSURE
+   intr_set_level(old_level);
 }
 
 
