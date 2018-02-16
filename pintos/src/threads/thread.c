@@ -437,7 +437,7 @@ static void init_thread (struct thread *t, const char *name, int priority)
   t->magic = THREAD_MAGIC;
   
   t-> initial_priority = priority;
-  list_init(&t-> list_of_priority_dontaions);
+  list_init(&t-> list_of_priority_donations);
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
