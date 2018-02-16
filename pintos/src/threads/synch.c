@@ -255,9 +255,30 @@ void lock_release (struct lock *lock)
 {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
-
+   
+  enum intr_level old_level = intr_disable();
+   
   lock->holder = NULL;
+   //
+  struct list_elem *item_in_list = list_begin(&thread_current()->list_of_priority_donations);
+  struct list_elem *next_elem;
+
+   while (item_in_list != list_end(&thread_current() -> list_of_priority_donations))
+   {
+      struct thread *t = list_entry(item_in_list, struct thread, donated_elem);
+      next_elem = list_next(item_in_list);
+
+      if(t-> waiting_for == thread_current()->waiting_for)
+      {
+        list_remove(item_in_list);
+      }
+      item_in_list = next_elem;
+    } 
+   int dummy = calculate_and_set_priority(thread_current();
+   
+   
   sema_up (&lock->semaphore);
+  intr_set_level (old_level);
 }
 
 
