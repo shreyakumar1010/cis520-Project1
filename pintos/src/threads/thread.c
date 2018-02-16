@@ -620,10 +620,26 @@ void donate_priority(struct thread *t)
       //selects thread that is being waited for aka the one holding the lock
       struct thread *threadHoldingLock = t->waiting_for->holder;
       // if this is not the current thread then it has already donated, we should undo that donation
-      /*if(thread_current()!=t)
+      if(thread_current()!=t)
       {
-        undo_donation(t); //NEED TO IMPLEMENT THIS FUNCTION
-      }  THIS IS WHERE ERRORS MIGHT OCCUR WITH NESTING                                   */
+        //undo_donation(t); //NEED TO IMPLEMENT THIS FUNCTION
+	        struct list_elem *item_in_list = list_begin(&thread_current()->list_of_priority_donations);
+                struct list_elem *next_elem;
+
+   while (item_in_list != list_end(&thread_current() -> list_of_priority_donations))
+   {
+      struct thread *t = list_entry(item_in_list, struct thread, donated_elem);
+      next_elem = list_next(item_in_list);
+
+      if(t-> waiting_for == thread_current()->waiting_for)
+      {
+        list_remove(item_in_list);
+      }
+      item_in_list = next_elem;
+} 
+      }  //THIS IS WHERE ERRORS MIGHT OCCUR WITH NESTING  
+      */
+	    
       //priority change happens in calculate_and_set_priority
       if(threadHoldingLock != NULL)
       {
