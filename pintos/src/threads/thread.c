@@ -299,7 +299,7 @@ void thread_exit (void)
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
-	//printf("is it threadexit?");
+	printf("is it threadexit?");
   NOT_REACHED ();
 }
 
