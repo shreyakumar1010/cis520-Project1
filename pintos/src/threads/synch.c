@@ -68,7 +68,7 @@ void sema_down (struct semaphore *sema)
   while (sema->value == 0) 
     {
       //i dont know if we actually have to have priority dontations for semaphores
-      donate_priority(current_thread());
+      donate_priority(thread_current());
       //list_push_back (&sema->waiters, &thread_current ()->elem); //This will no longer be used
      list_insert_ordered(&sema->waiters, &thread_current()->elem, true_if_higher_priority, NULL); 
      
@@ -215,7 +215,7 @@ void lock_acquire (struct lock *lock)
   if(lock->holder!=NULL)
    {
       thread_current()->waiting_for = lock;
-      donate_priority(current_thread());
+      donate_priority(thread_current());
       
    }
 
