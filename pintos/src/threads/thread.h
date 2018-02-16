@@ -142,7 +142,7 @@ void yield_thread_if_no_longer_max(void);
 static int calculate_and_set_priority(struct thread *t);
 void donate_priority(struct thread *t);
 bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *B);
-static void remove_and_insert_thread_after_priority_change(struct thread * tochange);
+void remove_and_insert_thread_after_priority_change(struct thread * tochange);
 
 /* Performs some operation on thread t, given auxiliary data AUX. */
 typedef void thread_action_func (struct thread *t, void *aux);
