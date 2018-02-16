@@ -275,7 +275,7 @@ void lock_release (struct lock *lock)
       }
       item_in_list = next_elem;
     } 
-   int dummy = calculate_and_set_priority(thread_current());
+   calculate_and_set_priority(thread_current());
    
    
   sema_up (&lock->semaphore);
