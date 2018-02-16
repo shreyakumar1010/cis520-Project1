@@ -576,7 +576,7 @@ static void remove_and_insert_thread_after_priority_change(struct thread * tocha
 {
 	ASSERT(intr_get_level()==INTR_OFF); 
 	list_remove(&tochange->elem);
-    	list_insert_ordered(&ready_list, &tochange->elem, &true_if_higher_priority, NULL);
+    	list_insert_ordered(&ready_list, &tochange->elem, true_if_higher_priority, NULL);
 }
 
 /* Returns a tid to use for a new thread. */
@@ -631,7 +631,7 @@ void donate_priority(struct thread *t)
         calculate_and_set_priority(threadHoldingLock);   //IMPLEMENT     
         
         //add this donation to the list_of_priority_donations
-        list_insert_ordered(&threadHoldingLock->list_of_priority_donations,&threadHoldingLock->donated_elem, &true_if_higher_priority, NULL);
+        list_insert_ordered(&threadHoldingLock->list_of_priority_donations,&threadHoldingLock->donated_elem, true_if_higher_priority, NULL);
 
         //now set t to be the threadHoldingLock to nest
         t = threadHoldingLock;
@@ -654,7 +654,7 @@ static int calculate_and_set_priority(struct thread *t)
 
   enum intr_level old_level = intr_disable();
   
-  if(!list_empty(t->list_of_priority_donations)) //if the list is not empty
+  if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
   {
     //the top element of the donation list should have the highest return_priority
     struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donations), struct thread, donated_elem);
@@ -685,7 +685,7 @@ void yield_thread_if_no_longer_max(void)
 {
    //struct thread *cur = thread_current();
    //struct thread *top = list_entry(list_front(&ready_list));
-   if( thread_current() -> priority > list_entry(list_begin(&ready_list), struct thread, elem)-> priority))
+   if( thread_current() -> priority > list_entry(list_begin(&ready_list), struct thread, elem)-> priority)
    {
      thread_yield();
    }
