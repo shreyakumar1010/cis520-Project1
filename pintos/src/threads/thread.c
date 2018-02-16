@@ -574,7 +574,7 @@ static void remove_and_insert_thread_after_priority_change(struct thread * tocha
 {
 	ASSERT(intr_get_level()==INTR_OFF); 
 	list_remove(&tochange->elem);
-    	list_insert_ordered(&ready_list, &tochange->elem, higher_priority_cmp, NULL);
+    	list_insert_ordered(&ready_list, &tochange->elem, true_if_higher_priority, NULL);
 }
 
 /* Returns a tid to use for a new thread. */
