@@ -631,7 +631,7 @@ void donate_priority(struct thread *t)
         calculate_and_set_priority(threadHoldingLock);   //IMPLEMENT     
         
         //add this donation to the list_of_priority_donations
-        list_insert_ordered(&threadHoldingLock->list_of_priority_donations, true_if_a_higher_priority, NULL);
+        list_insert_ordered(&threadHoldingLock->list_of_priority_donations,&threadHoldingLock->donated_elem, true_if_higher_priority, NULL);
 
         //now set t to be the threadHoldingLock to nest
         t = threadHoldingLock;
@@ -663,7 +663,7 @@ static int calculate_and_set_priority(struct thread *t)
   }
 
   //now we determine if the dontated priority is higher than the initial priority
-  if(return_priority > t->inital_priority)
+  if(return_priority > t->initial_priority)
   {
     t->priority = return_priority;
     
@@ -671,7 +671,7 @@ static int calculate_and_set_priority(struct thread *t)
   else
   {
     t->priority = initial_priority;
-    return_priority = priority;
+    return_priority = t->priority;
   }
   
   remove_and_insert_thread_after_priority_change(t);
@@ -685,7 +685,7 @@ void yield_thread_if_no_longer_max(void)
 {
    //struct thread *cur = thread_current();
    //struct thread *top = list_entry(list_front(&ready_list));
-   if( thread_current() -> priority > list_entry(list_front(&ready_list)-> priority))
+   if( thread_current() -> priority > list_entry(list_front(&ready_list)-> priority)
    {
      thread_yield();
    }
