@@ -680,10 +680,11 @@ int calculate_and_set_priority(struct thread *t)
   
   if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
   {
-	  //printf("list not empty\n");
+	  printf("list not empty\n");
     //the top element of the donation list should have the highest return_priority
     struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donations), struct thread, donated_elem);
     return_priority = topOfDonationList-> priority;
+	  printf("priority is = ");printf(return_priority);printf("\n");
     
   }
 
@@ -699,9 +700,9 @@ int calculate_and_set_priority(struct thread *t)
     t->priority = t->initial_priority;
     return_priority = t->priority;
   }
-  	//printf("should remove and reinsert with priority change \n");
+  	printf("should remove and reinsert with priority change \n");
   remove_and_insert_thread_after_priority_change(t);
-	//printf("inserted should have worked\n");
+	printf("insert should have just happened\n");
   intr_set_level(old_level);
 	//printf("interrupts toggled\n");
   return return_priority;
