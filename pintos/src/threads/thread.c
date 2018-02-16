@@ -576,7 +576,7 @@ schedule (void)
   thread_schedule_tail (prev);
 }
 
-* Compares the time_to_wakeup of two threads, A and B. If they have the same time_to_wakeup, 
+/* Compares the time_to_wakeup of two threads, A and B. If they have the same time_to_wakeup, 
 then the tie is broken by priority (if A's priority is higher than B's, then returns true, else returns false).
 If they don't have the same time_to_wakeup, then it returns true if A's time is less than B's and false if B's
 time is less than A's
@@ -623,7 +623,6 @@ allocate_tid (void)
 
   return tid;
 }
-
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
@@ -708,14 +707,6 @@ static int calculate_and_set_priority(struct thread *t)
   return return_priority;
 }
 
-/*undo_donation(struct thread *t)
-{
-  //should only be called with interrupts off
-  if(!list_empty(&t->list_of_priority_donations)) // if list of donations if not empty
-  {
-    
-  }
-} */
 void yield_thread_if_no_longer_max(void)
 {
    //struct thread *cur = thread_current();
