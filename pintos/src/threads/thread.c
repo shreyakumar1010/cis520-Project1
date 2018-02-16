@@ -98,7 +98,6 @@ void thread_init (void)
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
-	printf("thread running");
   initial_thread->tid = allocate_tid ();
 }
 
@@ -220,7 +219,6 @@ void thread_block (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   thread_current ()->status = THREAD_BLOCKED;
-	printf("thread blcokesd");
   schedule ();
 }
 
@@ -245,7 +243,6 @@ void thread_unblock (struct thread *t)
   list_insert_ordered(&ready_list, &t->elem, (list_less_func *)&true_if_higher_priority, NULL);
 	
   t->status = THREAD_READY;
-	printf("thread ready");
   intr_set_level (old_level);
 }
 
@@ -297,10 +294,8 @@ void thread_exit (void)
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   //intr_disable ();
-  printf("THREAD EXIT");
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
-	printf("thread dying");
   schedule ();
   NOT_REACHED ();
 }
@@ -319,7 +314,6 @@ void thread_yield (void)
   if (cur != idle_thread) 
     list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL);
   cur->status = THREAD_READY;
-	printf("thread ready");
   
   schedule ();
   intr_set_level (old_level);
@@ -444,7 +438,6 @@ static void init_thread (struct thread *t, const char *name, int priority)
 
   memset (t, 0, sizeof *t);
   t->status = THREAD_BLOCKED;
-	printf("thread blocked");
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
@@ -482,10 +475,9 @@ static void * alloc_frame (struct thread *t, size_t size)
 static struct thread *next_thread_to_run (void) 
 {
   if (list_empty (&ready_list))
-  {  //printf("list empty idle");
+  {  
     return idle_thread;}
   else{
-	  //printf("not empty");
     return list_entry (list_pop_front (&ready_list), struct thread, elem);}
 }
 
@@ -514,7 +506,6 @@ void thread_schedule_tail (struct thread *prev)
 
   /* Mark us as running. */
   cur->status = THREAD_RUNNING;
-	printf("thread running");
 
   /* Start new time slice. */
   thread_ticks = 0;
@@ -592,7 +583,6 @@ void remove_and_insert_thread_after_priority_change(struct thread * tochange)
 	if(tochange->status == THREAD_READY)
 	{
 		ASSERT(intr_get_level()==INTR_OFF); 
-		//printf("REMOVE_AND_INSERT_THREAD_AFTER_PRIORITY_CHANGE");
 		list_remove(&tochange->elem);
     		list_insert_ordered(&ready_list, &tochange->elem, (list_less_func *) &true_if_higher_priority, NULL);
 	}
@@ -653,12 +643,11 @@ void donate_priority(struct thread *t)
 
       if(t-> waiting_for == thread_current()->waiting_for)
       {
-	    //printf("DONATE PRIORITY");
         list_remove(item_in_list);
       }
       item_in_list = next_elem;
 } 
-      }  //THIS IS WHERE ERRORS MIGHT OCCUR WITH NESTING  
+      } 
      
 	    
       //priority change happens in calculate_and_set_priority
@@ -689,7 +678,6 @@ int calculate_and_set_priority(struct thread *t)
   int return_priority = -1; //initialized return priority to negative 1
 
   enum intr_level old_level = intr_disable();
-  	//printf("interrupts disabled\n");
   
   if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
   {
@@ -702,26 +690,20 @@ int calculate_and_set_priority(struct thread *t)
   //now we determine if the dontated priority is higher than the initial priority
   if(return_priority > t->initial_priority)
   {
-	  //printf("return priority greater than initial/n");
     t->priority = return_priority;
   }
   else
   {
     t->priority = t->initial_priority;
   }
-  	//printf("should remove and reinsert with priority change \n");
   remove_and_insert_thread_after_priority_change(t);
-	//printf("insert should have just happened\n");
   intr_set_level(old_level);
-	//printf("interrupts toggled\n");
   return return_priority;
 }
 
 
 void yield_thread_if_no_longer_max(void)
 {
-   //struct thread *cur = thread_current();
-   //struct thread *top = list_entry(list_front(&ready_list));
    if( (thread_current() -> priority) > (list_entry(list_begin(&ready_list), struct thread, elem)-> priority))
    {
      thread_yield();
