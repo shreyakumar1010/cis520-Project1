@@ -312,8 +312,8 @@ void thread_yield (void)
   if (cur != idle_thread) 
     list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL);
   cur->status = THREAD_READY;
-	printf("calling schedule");
   schedule ();
+	printf("just called schedule in thread yield\n");
   intr_set_level (old_level);
 }
 
