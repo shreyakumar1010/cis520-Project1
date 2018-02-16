@@ -572,7 +572,7 @@ bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void
 }
 
 /* interrupts are off, essentially just changes the priority*/
-static void remove_and_insert_thread_after_priority_change(struct thread * tochange)
+void remove_and_insert_thread_after_priority_change(struct thread * tochange)
 {
 	ASSERT(intr_get_level()==INTR_OFF); 
 	list_remove(&tochange->elem);
