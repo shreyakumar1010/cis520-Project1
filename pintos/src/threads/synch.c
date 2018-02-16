@@ -71,7 +71,7 @@ void sema_down (struct semaphore *sema)
       //i dont know if we actually have to have priority dontations for semaphores
       donate_priority(thread_current());
       //list_push_back (&sema->waiters, &thread_current ()->elem); //This will no longer be used
-     list_insert_ordered(&sema->waiters, &thread_current()->elem, true_if_higher_priority, NULL); 
+     list_insert_ordered(&sema->waiters, &thread_current()->elem, rank_sema_priority, NULL); 
      
      thread_block ();
     }
@@ -121,7 +121,7 @@ void sema_up (struct semaphore *sema)
   if (!list_empty (&sema->waiters)) 
   { 
     // Sort the list
-    list_sort(&sema->waiters, true_if_higher_priority, NULL);
+    list_sort(&sema->waiters, rank_sema_priority, NULL);
     thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
   sema->value++;
@@ -384,4 +384,20 @@ void cond_broadcast (struct condition *cond, struct lock *lock)
   while (!list_empty (&cond->waiters))
     cond_signal (cond, lock);
 }
+bool rank_sema_priority(const struct list_elem *a, const struct list_elem *b)
+{
+struct semaphore_elem semA* = list_entry(a, struct semaphore_elem, elem);
+struct semaphore_elem semB* = list_entry(b, struct semaphore_elem, elem);
 
+if(list_empty(&semB -> semaphore.waiters)){return true;}
+if(list_empty(&semA -> semaphore.waiters)){return false;}
+
+list_sort(&semA -> semaphore.waiters, true_if_higher_priority, NULL);
+list_sort(&semB -> semaphore.waiters, true_if_higher_priority, NULL);
+
+struct thread *ta = list_entry(list_front(&semA ->semaphore.waiters), struct thread, elem);
+struct thread *tb = list_entry(list_front(&semB ->semaphore.waiters), struct thread, elem);
+
+if(ta->priority > tb->priority){return true;}
+else {return false;}
+}
