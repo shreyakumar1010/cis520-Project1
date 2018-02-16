@@ -139,7 +139,7 @@ void thread_exit (void) NO_RETURN;
 void thread_yield (void);
 
 void yield_thread_if_no_longer_max(void);
-static int calculate_and_set_priority(struct thread *t);
+int calculate_and_set_priority(struct thread *t);
 void donate_priority(struct thread *t);
 bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *B);
 void remove_and_insert_thread_after_priority_change(struct thread * tochange);
