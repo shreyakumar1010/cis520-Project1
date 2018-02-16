@@ -98,6 +98,7 @@ void thread_init (void)
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
+	printf("thread running");
   initial_thread->tid = allocate_tid ();
 }
 
@@ -219,7 +220,7 @@ void thread_block (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   thread_current ()->status = THREAD_BLOCKED;
-	printf("is it threadblacok");
+	printf("thread blcokesd");
   schedule ();
 }
 
@@ -244,6 +245,7 @@ void thread_unblock (struct thread *t)
   list_insert_ordered(&ready_list, &t->elem, (list_less_func *)&true_if_higher_priority, NULL);
 	
   t->status = THREAD_READY;
+	printf("thread ready");
   intr_set_level (old_level);
 }
 
@@ -268,7 +270,6 @@ struct thread * thread_current (void)
      of stack, so a few big automatic arrays or moderate
      recursion can cause stack overflow. */
   ASSERT (is_thread (t));
-	printf(
   ASSERT (t->status == THREAD_RUNNING);
 
   return t;
@@ -295,12 +296,12 @@ void thread_exit (void)
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
-  intr_disable ();
+  //intr_disable ();
   printf("THREAD EXIT");
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
+	printf("thread dying");
   schedule ();
-	printf("is it threadexit?");
   NOT_REACHED ();
 }
 
@@ -318,8 +319,7 @@ void thread_yield (void)
   if (cur != idle_thread) 
     list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL);
   cur->status = THREAD_READY;
-	
-  printf("something here in thread_yield");
+	printf("thread ready");
   
   schedule ();
   intr_set_level (old_level);
@@ -444,6 +444,7 @@ static void init_thread (struct thread *t, const char *name, int priority)
 
   memset (t, 0, sizeof *t);
   t->status = THREAD_BLOCKED;
+	printf("thread blocked");
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
@@ -513,6 +514,7 @@ void thread_schedule_tail (struct thread *prev)
 
   /* Mark us as running. */
   cur->status = THREAD_RUNNING;
+	printf("thread running");
 
   /* Start new time slice. */
   thread_ticks = 0;
