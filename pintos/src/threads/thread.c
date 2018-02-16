@@ -310,7 +310,7 @@ void thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_insert_ordered (&ready_list, &cur->elem, true_if_higher_priority, NULL);
+    list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -576,7 +576,7 @@ void remove_and_insert_thread_after_priority_change(struct thread * tochange)
 {
 	ASSERT(intr_get_level()==INTR_OFF); 
 	list_remove(&tochange->elem);
-    	list_insert_ordered(&ready_list, &tochange->elem, true_if_higher_priority, NULL);
+    	list_insert_ordered(&ready_list, &tochange->elem, (list_less_func *) &true_if_higher_priority, NULL);
 }
 
 /* Returns a tid to use for a new thread. */
@@ -631,7 +631,7 @@ void donate_priority(struct thread *t)
         calculate_and_set_priority(threadHoldingLock);   //IMPLEMENT     
         
         //add this donation to the list_of_priority_donations
-        list_insert_ordered(&threadHoldingLock->list_of_priority_donations,&threadHoldingLock->donated_elem, true_if_higher_priority, NULL);
+        list_insert_ordered(&threadHoldingLock->list_of_priority_donations,&threadHoldingLock->donated_elem, (list_less_func *) &true_if_higher_priority, NULL);
 
         //now set t to be the threadHoldingLock to nest
         t = threadHoldingLock;
