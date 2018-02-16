@@ -272,7 +272,7 @@ void lock_release (struct lock *lock)
 
       if(t-> waiting_for == thread_current()->waiting_for)
       {
-        printf("I'm in lock_release (synch.c)")
+        printf("I'm in lock_release (synch.c)");
         list_remove(item_in_list);
       }
       item_in_list = next_elem;
