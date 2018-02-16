@@ -596,7 +596,7 @@ static tid_t allocate_tid (void)
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
 
 
-bool true_if_a_higher_priority(const struct list_elem *A, const struct list_elem *B)
+bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *B)
 {
   struct thread *threadA = list_entry(A, struct thread, elem);
   struct thread *threadB = list_entry(B, struct thread, elem);
