@@ -95,23 +95,24 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
   
-  int64_t time_to_wakeup;
-  struct list_elem sleeping_element;
-  struct semaphore timer_sem;
+    int64_t time_to_wakeup;
+    struct list_elem sleeping_element;
+    struct semaphore timer_sem;
   
-  int initial_priority; // initial priority
-  struct lock * waiting_for; //lock we're waiting on
-  struct list list_of_priority_donations; //Contains threads that are able to  donate priority
-  struct list_elem donated_elem; //The element that gets inserted into the donation list
+    int initial_priority; // initial priority
+    struct lock * waiting_for; //lock we're waiting on
+    struct list list_of_priority_donations; //Contains threads that are able to  donate priority
+    struct list_elem donated_elem; //The element that gets inserted into the donation list
 
-#ifdef USERPROG
+    #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */
-#endif
+    #endif
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };
+
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -146,6 +147,7 @@ static void remove_and_insert_thread_after_priority_change(struct thread * tocha
 /* Performs some operation on thread t, given auxiliary data AUX. */
 typedef void thread_action_func (struct thread *t, void *aux);
 void thread_foreach (thread_action_func *, void *);
+
 /* compares wakeuptime between threads, used to orders lists in timer.c*/
 bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void *aux UNUSED);
 
