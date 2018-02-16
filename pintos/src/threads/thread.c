@@ -312,6 +312,7 @@ void thread_yield (void)
   if (cur != idle_thread) 
     list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL);
   cur->status = THREAD_READY;
+	printf("calling schedule");
   schedule ();
   intr_set_level (old_level);
 }
@@ -472,10 +473,10 @@ static void * alloc_frame (struct thread *t, size_t size)
 static struct thread *next_thread_to_run (void) 
 {
   if (list_empty (&ready_list))
-  {  printf("list empty idle");
+  {  //printf("list empty idle");
     return idle_thread;}
   else{
-	  printf("not empty");
+	  //printf("not empty");
     return list_entry (list_pop_front (&ready_list), struct thread, elem);}
 }
 
@@ -698,9 +699,9 @@ int calculate_and_set_priority(struct thread *t)
   {
     t->priority = t->initial_priority;
   }
-  	printf("should remove and reinsert with priority change \n");
+  	//printf("should remove and reinsert with priority change \n");
   remove_and_insert_thread_after_priority_change(t);
-	printf("insert should have just happened\n");
+	//printf("insert should have just happened\n");
   intr_set_level(old_level);
 	//printf("interrupts toggled\n");
   return return_priority;
