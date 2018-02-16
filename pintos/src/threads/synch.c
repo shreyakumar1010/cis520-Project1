@@ -346,7 +346,7 @@ void cond_wait (struct condition *cond, struct lock *lock)
   
   sema_init (&waiter.semaphore, 0);
   
-  list_insert_orderedd(&cond->waiters, &waiter.elem, (list_less_func *) &rank_sema_priority, NULL);
+  list_insert_ordered(&cond->waiters, &waiter.elem, (list_less_func *) &rank_sema_priority, NULL);
    
   lock_release (lock);
   sema_down (&waiter.semaphore);
@@ -397,8 +397,8 @@ struct semaphore_elem * semB = list_entry(b, struct semaphore_elem, elem);
 if(list_empty(&semB -> semaphore.waiters)){return true;}
 if(list_empty(&semA -> semaphore.waiters)){return false;}
 
-list_sort(&semA -> semaphore.waiters, true_if_higher_priority, NULL);
-list_sort(&semB -> semaphore.waiters, true_if_higher_priority, NULL);
+list_sort(&semA -> semaphore.waiters, (list_less_func *) &true_if_higher_priority, NULL);
+list_sort(&semB -> semaphore.waiters, (list_less_func *) &true_if_higher_priority, NULL);
 
 struct thread *ta = list_entry(list_front(&semA ->semaphore.waiters), struct thread, elem);
 struct thread *tb = list_entry(list_front(&semB ->semaphore.waiters), struct thread, elem);
