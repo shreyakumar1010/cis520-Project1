@@ -216,6 +216,7 @@ void thread_block (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   thread_current ()->status = THREAD_BLOCKED;
+	printf("is it threadblacok");
   schedule ();
 }
 
@@ -295,6 +296,7 @@ void thread_exit (void)
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
+	printf("is it threadexit?");
   NOT_REACHED ();
 }
 
@@ -313,7 +315,6 @@ void thread_yield (void)
     list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL);
   cur->status = THREAD_READY;
   schedule ();
-	printf("just called schedule in thread yield\n");
   intr_set_level (old_level);
 }
 
