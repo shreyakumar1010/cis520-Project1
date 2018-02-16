@@ -138,6 +138,11 @@ const char *thread_name (void);
 void thread_exit (void) NO_RETURN;
 void thread_yield (void);
 
+void thread_set_nice(int nice UNUSED);
+int thread_get_nice(void);
+int thread_get_load_avg(void);
+int thread_get_recent_cpu(void);
+
 void yield_thread_if_no_longer_max(void);
 int calculate_and_set_priority(struct thread *t);
 void donate_priority(struct thread *t);
