@@ -386,8 +386,8 @@ void cond_broadcast (struct condition *cond, struct lock *lock)
 }
 bool rank_sema_priority(const struct list_elem *a, const struct list_elem *b)
 {
-struct semaphore_elem semA* = list_entry(a, struct semaphore_elem, elem);
-struct semaphore_elem semB* = list_entry(b, struct semaphore_elem, elem);
+struct semaphore_elem * semA = list_entry(a, struct semaphore_elem, elem);
+struct semaphore_elem * semB = list_entry(b, struct semaphore_elem, elem);
 
 if(list_empty(&semB -> semaphore.waiters)){return true;}
 if(list_empty(&semA -> semaphore.waiters)){return false;}
