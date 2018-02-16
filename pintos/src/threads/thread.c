@@ -648,7 +648,7 @@ void donate_priority(struct thread *t)
 }
 
 
-static int calculate_and_set_priority(struct thread *t)
+int calculate_and_set_priority(struct thread *t)
 {
   int return_priority = -1; //initialized return priority to negative 1
 
