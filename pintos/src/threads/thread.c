@@ -718,9 +718,9 @@ void calculate_and_set_priority(struct thread *t)
   
 
   //now we determine if the dontated priority is higher than the initial priority
-  if(topOfDonationsList->priority > t->initial_priority)
+  if(topOfDonationList->priority > t->initial_priority)
   {
-    t->priority = topOfDonationsList -> priority;
+    t->priority = topOfDonationList -> priority;
   }
   
  // remove_and_insert_thread_after_priority_change(t);
