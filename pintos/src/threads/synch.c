@@ -115,9 +115,7 @@ void sema_up (struct semaphore *sema)
   enum intr_level old_level=  intr_disable ();
 
   ASSERT (sema != NULL);
-
  
-   
   if (!list_empty (&sema->waiters)) 
   { 
     // Sort the list
@@ -125,9 +123,10 @@ void sema_up (struct semaphore *sema)
     thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
   sema->value++;
-   if(!intr_context()) //IS THIS REAL LIFE
+   if(!intr_context()) //IS THIS REAL LIFE 
+	   //or is it just fantasy?
    {
-    yield_thread_if_no_longer_max();
+    yield_thread_if_no_longer_max(current_thread);
    }
 	   //top thread could no longer be the highest priority thread
    
