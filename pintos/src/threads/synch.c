@@ -373,8 +373,9 @@ void cond_wait (struct condition *cond, struct lock *lock)
   
   //list here order
 	//LOOK AT ME 
-  list_insert_ordered(&cond->waiters, &waiter.elem, (list_less_func*) & true_if_higher_priority, NULL);
-   
+  //list_insert_ordered(&cond->waiters, &waiter.elem, (list_less_func*) & true_if_higher_priority, NULL);
+	
+  list_push_back (&cond->waiters, &waiter.elem); 
   lock_release (lock);
   sema_down (&waiter.semaphore);
   lock_acquire (lock);
