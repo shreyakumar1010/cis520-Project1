@@ -628,17 +628,17 @@ void donate_priority(struct thread *t)
     
     //  if this thread is locked to another thread
     if(t->waiting_for != NULL) 
-    {
+    {          int loop = -1;
+	       ASSERT (loop == 0);
+	       
+
       //selects thread that is being waited for aka the one holding the lock
       struct thread *threadHoldingLock = t->waiting_for->holder;
       // if this is not the current thread then it has already donated, we should undo that donation
       if(thread_current()!=t)
       {
         //undo_donation(t); //NEED TO IMPLEMENT THIS FUNCTION
-	      int loop = -1;
-	       ASSERT (loop == 0);
-	       
-
+	      
   
       }
 	    
