@@ -669,7 +669,7 @@ int calculate_and_set_priority(struct thread *t)
   int return_priority = -1; //initialized return priority to negative 1
 
   enum intr_level old_level = intr_disable();
-  int loop = -1; ASSERT(loop == 0);
+  
   if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
   {
 	  int ifloops = -1; ASSERT(ifloops == 0);
