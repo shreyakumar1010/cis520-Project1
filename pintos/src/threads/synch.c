@@ -262,17 +262,18 @@ bool lock_try_acquire (struct lock *lock)
    handler. */
 void lock_release (struct lock *lock) 
 {
-  ASSERT (lock != NULL);
+  ASSERT (lock != NULL);	
   ASSERT (lock_held_by_current_thread (lock));
-   
-  //enum intr_level old_level = intr_disable();
+
   lock->holder = NULL;
  // struct list_elem *e;
-//for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
+ //for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
   struct list_elem *elem = list_begin(&thread_current()->list_of_priority_donations);
   struct list_elem *next_elem;
+  //int dummy = 0;	
   while (elem != list_end(&thread_current()->list_of_priority_donations))
    {
+      //ASSERT(dummy != 0);  
       struct thread *t = list_entry(elem, struct thread, donated_elem);
       next_elem = list_next(elem);
       // if the lock t is waiting for is the same as the lock supplied in the parameters, it removes it
@@ -280,11 +281,10 @@ void lock_release (struct lock *lock)
 	  list_remove(elem);
       elem = next_elem;
    }
- 
+
   calculate_and_set_priority(thread_current());
    
   sema_up (&lock->semaphore);
-  //intr_set_level (old_level);
 }
 
 
@@ -294,7 +294,6 @@ void lock_release (struct lock *lock)
 bool lock_held_by_current_thread (const struct lock *lock) 
 {
   ASSERT (lock != NULL);
-
   return lock->holder == thread_current ();
 }
 
@@ -350,6 +349,7 @@ void cond_wait (struct condition *cond, struct lock *lock)
   
   sema_init (&waiter.semaphore, 0);
   
+  //list here order
   list_insert_ordered(&cond->waiters, &waiter.elem, (list_less_func *) &rank_sema_priority, NULL);
    
   lock_release (lock);
@@ -374,8 +374,7 @@ void cond_signal (struct condition *cond, struct lock *lock UNUSED)
 
   if (!list_empty (&cond->waiters)) 
   {
-     
-    list_sort(&cond->waiters,  (list_less_func *) &rank_sema_priority, NULL);
+    //list_sort(&cond->waiters,  (list_less_func *) &rank_sema_priority, NULL);
     sema_up (&list_entry (list_pop_front (&cond->waiters),struct semaphore_elem, elem)->semaphore);
   }
 }
