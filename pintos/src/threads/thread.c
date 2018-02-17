@@ -639,7 +639,7 @@ void donate_priority(struct thread *t)
 
       //selects thread that is being waited for aka the one holding the lock
       struct thread *threadHoldingLock = t->waiting_for->holder; 
-      ASSERT(waiter!=t);
+      ASSERT(threadHoldingLock!=t);
       // if this is not the current thread then it has already donated, we should undo that donation
       if(thread_current()!=t)
       {
