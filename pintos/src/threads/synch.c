@@ -277,7 +277,7 @@ void lock_release (struct lock *lock)
       struct thread *t = list_entry(item_in_list, struct thread, donated_elem);
       next_elem = list_next(item_in_list);
 
-      if(t-> waiting_for == thread_current()->lock)
+      if(t-> waiting_for == lock)
       {
 	      //printf("in if loop");
         list_remove(item_in_list);
