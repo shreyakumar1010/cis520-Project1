@@ -213,8 +213,6 @@ void lock_acquire (struct lock *lock)
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
    
-   //enum intr_level old_level = intr_disable();
-   
   // if the lock is being held we need to donate
   	
   if(lock->holder!=NULL)
@@ -230,7 +228,6 @@ void lock_acquire (struct lock *lock)
   lock->holder = thread_current ();
   thread_current()->waiting_for = NULL;
 
-   //intr_set_level(old_level);
 }
 
 
@@ -247,15 +244,15 @@ bool lock_try_acquire (struct lock *lock)
   ASSERT (lock != NULL);
   ASSERT (!lock_held_by_current_thread (lock));
   
-  enum intr_level old_level = intr_disable();
+  //enum intr_level old_level = intr_disable();
 	
   success = sema_try_down (&lock->semaphore);
   if (success)
   { 
-	  thread_current()->waiting_for = NULL;
+	thread_current()->waiting_for = NULL;
 	lock->holder = thread_current ();
   }
-  intr_set_level(old_level);
+  //intr_set_level(old_level);
 	  
   return success;
 }
