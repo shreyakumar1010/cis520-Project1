@@ -31,6 +31,7 @@ static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
 static struct list sleeperCells;
+static struct lock sleeperLock;
 
 
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
@@ -40,6 +41,7 @@ void timer_init (void)
   pit_configure_channel (0, 2, TIMER_FREQ);
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
   list_init(&sleeperCells);
+  lock_init(&sleeperLock);
 }
 
 
@@ -100,7 +102,9 @@ void timer_sleep (int64_t ticks)
   ASSERT (intr_get_level () == INTR_ON);
   enum intr_level old_level = intr_disable ();
 	
+  lock_aquire(&sleeperLock);	
   list_insert_ordered(&sleeperCells, &thread_current()-> sleeping_element, lower_wakeuptime, NULL);
+  lock_release(&sleeperLock);
 
   sema_down(&thread_current()-> timer_sem);
   intr_set_level(old_level);
