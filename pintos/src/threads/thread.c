@@ -639,7 +639,7 @@ void donate_priority(struct thread *t)
                 struct list_elem *next_elem;
 
   
-     
+      }
 	    
       //priority change happens in calculate_and_set_priority
       if(threadHoldingLock != NULL)
