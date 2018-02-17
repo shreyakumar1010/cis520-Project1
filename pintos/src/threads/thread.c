@@ -743,20 +743,6 @@ void yield_thread_if_no_longer_max(struct thread * toYield)
      thread_yield();
 
 }
-void shared_lock_removal(struct lock *lock, struct thread *Threddy)
-{
-  struct list_elem *elem = list_begin(&Threddy->list_of_priority_donations);
-  struct list_elem *next_elem;
-  while (elem != list_end(&Threddy->list_of_priority_donations))
-    {
-      struct thread *t = list_entry(elem, struct thread, donated_elem);
-      next_elem = list_next(elem);
-      // if the lock t is waiting for is the same as the lock supplied in the parameters, it removes it
-      if (t->waiting_for == lock)
-	  list_remove(elem);
-      elem = next_elem;
-    }
-}
 
 void thread_set_nice(int nice UNUSED)
 {}
