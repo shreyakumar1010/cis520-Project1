@@ -169,7 +169,7 @@ static void sema_test_helper (void *sema_)
       sema_up (&sema[1]);
     }
 }
-//
+
 
 
 /* Initializes LOCK.  A lock can be held by at most a single
