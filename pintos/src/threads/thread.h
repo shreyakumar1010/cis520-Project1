@@ -143,7 +143,7 @@ int thread_get_nice(void);
 int thread_get_load_avg(void);
 int thread_get_recent_cpu(void);
 
-void yield_thread_if_no_longer_max(void);
+void yield_thread_if_no_longer_max(struct thread *toYield);
 void calculate_and_set_priority(struct thread *t);
 void donate_priority(struct thread *t);
 bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *B);
