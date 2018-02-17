@@ -343,7 +343,7 @@ void thread_foreach (thread_action_func *func, void *aux)
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void thread_set_priority (int new_priority) 
 {
-  enum intr_level old_level = int_disable();	  
+  enum intr_level old_level = intr_disable();	  
   
   int previous_priority = thread_current() -> priority;
   
@@ -643,8 +643,8 @@ bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *
 void donate_priority(struct thread *t)
 {
   int numNestedDonation =0;
-  struct lock l* = t->waiting_for;
-  while(l & numNestedDonation < MAX_NESTED_DONATION_LEVEL)
+  struct lock *l = t->waiting_for;
+  while(l && numNestedDonation < MAX_NESTED_DONATION_LEVEL)
   {  
      numNestedDonation++;
      if(!l->holder){return;}
@@ -702,7 +702,7 @@ void donate_priority(struct thread *t)
     
   }*/
   
-}
+//}
 
 
 void calculate_and_set_priority(struct thread *t)
