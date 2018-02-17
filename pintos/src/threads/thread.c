@@ -345,21 +345,23 @@ void thread_set_priority (int new_priority)
 {
   enum intr_level old_level = intr_disable();	  
   
+  //saving the thread's previous priority
   int previous_priority = thread_current() -> priority;
-  
+  //setting the thread's priority to new_priority
   thread_current ()->initial_priority = new_priority;
-	
   calculate_and_set_priority(thread_current());
 	
+  // if the thread's previous priority is lower than it's new priority, donate	
   if(previous_priority < thread_current()->priority)
   {
 	  donate_priority(thread_current());
   }
-	if(previous_priority > thread_current()->priority)
-	{
-            yield_thread_if_no_longer_max();
-	}
-	intr_set_level(old_level);
+  else  
+	//LOOK HERE if(previous_priority > thread_current()->priority) 
+  {
+         yield_thread_if_no_longer_max();
+  }
+  intr_set_level(old_level);
 }
 
 
