@@ -271,9 +271,9 @@ void lock_release (struct lock *lock)
 for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
 {
 	
-    
+    struct thread *t = list_entry(e, struct thread, elem);
   
-  struct list_elem *item_in_list = list_begin(&thread_current()->list_of_priority_donations);
+  struct list_elem *item_in_list = list_begin(&t->list_of_priority_donations);
   struct list_elem *next_elem;
  
    while (item_in_list != list_end(&thread_current() -> list_of_priority_donations))
