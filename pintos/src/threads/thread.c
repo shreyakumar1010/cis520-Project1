@@ -707,9 +707,9 @@ void donate_priority(struct thread *t)
 
 void calculate_and_set_priority(struct thread *t)
 {
-  if(list_empty(&t->donation)){return;}
+  if(list_empty(&t->list_of_priority_donations)){return;}
   
-   int retun_priority = -1;
+   int return_priority = -1;
   //enum intr_level old_level = intr_disable();
   
   if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
