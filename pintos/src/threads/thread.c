@@ -621,10 +621,16 @@ bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *
 
 void donate_priority(struct thread *t)
 {
-  int numNestedDonation =0;
-  while(numNestedDonation <= MAX_NESTED_DONATION_LEVEL)//loop through for nested donations
+  //int numNestedDonation =0;
+  //while(numNestedDonation <= MAX_NESTED_DONATION_LEVEL)//loop through for nested donations
+  while(true)
   {     
     //maybe check to be sure the thread priority is set and determined
+    ASSERT(intr_get_level()==INTR_OFF);
+    //assert if its not a thread.
+    ASSERT(is_thread(t));
+	
+    calculate_and_set_priority(t);
     
     //  if this thread is locked to another thread
     if(t->waiting_for != NULL) 
@@ -633,6 +639,7 @@ void donate_priority(struct thread *t)
 
       //selects thread that is being waited for aka the one holding the lock
       struct thread *threadHoldingLock = t->waiting_for->holder; 
+      ASSERT(waiter!=t);
       // if this is not the current thread then it has already donated, we should undo that donation
       if(thread_current()!=t)
       {
@@ -644,7 +651,8 @@ void donate_priority(struct thread *t)
       //priority change happens in calculate_and_set_priority
       if(threadHoldingLock != NULL)
       { 
-        calculate_and_set_priority(threadHoldingLock);   
+         calculate_and_set_priority(threadHoldingLock);
+	 ASSERT(is_thread(waiter));
         
         //add this donation to the list_of_priority_donations
         list_insert_ordered(&threadHoldingLock->list_of_priority_donations,&threadHoldingLock->donated_elem, (list_less_func *) &true_if_higher_priority, NULL);
@@ -653,7 +661,7 @@ void donate_priority(struct thread *t)
         t = threadHoldingLock;
 
         //increment numNestedDonations
-        numNestedDonation++;
+      // numNestedDonation++;
       }
       else {break;} // threadHoldingLock is NULL
     }
@@ -676,7 +684,7 @@ int calculate_and_set_priority(struct thread *t)
     //the top element of the donation list should have the highest return_priority
     struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donations), struct thread, donated_elem);
     return_priority = topOfDonationList-> priority;
-    printf(return_priority);
+    
   }
 
   //now we determine if the dontated priority is higher than the initial priority
