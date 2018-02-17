@@ -715,7 +715,7 @@ void calculate_and_set_priority(struct thread *t)
     struct thread *topOfDonationList = list_entry(list_front(&t->list_of_priority_donations), struct thread, donated_elem);
 
     
-  }
+  
 
   //now we determine if the dontated priority is higher than the initial priority
   if(topOfDonationsList->priority > t->initial_priority)
