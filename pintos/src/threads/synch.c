@@ -213,8 +213,10 @@ void lock_acquire (struct lock *lock)
    enum intr_level old_level = intr_disable();
    
   // if the lock is being held we need to donate
+  	int loop = -1;
   if(lock->holder!=NULL)
-   {
+   {  
+      ASSERT (loop = 0);
       thread_current()->waiting_for = lock;
       donate_priority(thread_current());   
       list_insert_ordered(&lock->holder->list_of_priority_donations, &thread_current()-> donated_elem, (list_less_func*) & true_if_higher_priority, NULL);
