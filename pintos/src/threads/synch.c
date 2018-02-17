@@ -270,29 +270,12 @@ void lock_release (struct lock *lock)
   enum intr_level old_level = intr_disable();
    
   struct list_elem *e;
-for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
-{
+//for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
+//{
 	
-    struct thread *t = list_entry(e, struct thread, elem);
-  
-  struct list_elem *item_in_list = list_begin(&t->list_of_priority_donations);
-  struct list_elem *next_elem;
- 
-   while (item_in_list != list_end(&thread_current() -> list_of_priority_donations))
-   {
-	   //printf("in while loop\n");
-      struct thread *t = list_entry(item_in_list, struct thread, donated_elem);
-      next_elem = list_next(item_in_list);
-
-      if(t-> waiting_for == lock)
-      {
-	      //printf("in if loop");
-        list_remove(item_in_list);
-      }
-      item_in_list = next_elem;
-    } 
+    
 	
-}
+//}
    lock->holder = NULL;
    calculate_and_set_priority(thread_current());
    
