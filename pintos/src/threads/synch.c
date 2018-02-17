@@ -243,8 +243,6 @@ bool lock_try_acquire (struct lock *lock)
 
   ASSERT (lock != NULL);
   ASSERT (!lock_held_by_current_thread (lock));
-  
-  //enum intr_level old_level = intr_disable();
 	
   success = sema_try_down (&lock->semaphore);
   if (success)
@@ -252,7 +250,6 @@ bool lock_try_acquire (struct lock *lock)
 	thread_current()->waiting_for = NULL;
 	lock->holder = thread_current ();
   }
-  //intr_set_level(old_level);
 	  
   return success;
 }
@@ -268,26 +265,26 @@ void lock_release (struct lock *lock)
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
    
-  enum intr_level old_level = intr_disable();
+  //enum intr_level old_level = intr_disable();
   lock->holder = NULL;
  // struct list_elem *e;
 //for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
   struct list_elem *elem = list_begin(&thread_current()->list_of_priority_donations);
   struct list_elem *next_elem;
   while (elem != list_end(&thread_current()->list_of_priority_donations))
-    {
+   {
       struct thread *t = list_entry(elem, struct thread, donated_elem);
       next_elem = list_next(elem);
       // if the lock t is waiting for is the same as the lock supplied in the parameters, it removes it
       if (t->waiting_for == lock)
 	  list_remove(elem);
       elem = next_elem;
-    }
+   }
  
-   calculate_and_set_priority(thread_current());
+  calculate_and_set_priority(thread_current());
    
   sema_up (&lock->semaphore);
-  intr_set_level (old_level);
+  //intr_set_level (old_level);
 }
 
 
