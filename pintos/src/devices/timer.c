@@ -102,7 +102,7 @@ void timer_sleep (int64_t ticks)
   ASSERT (intr_get_level () == INTR_ON);
   enum intr_level old_level = intr_disable ();
 	
-  lock_aquire(&sleeperLock);	
+  lock_acquire(&sleeperLock);	
   list_insert_ordered(&sleeperCells, &thread_current()-> sleeping_element, lower_wakeuptime, NULL);
   lock_release(&sleeperLock);
 
