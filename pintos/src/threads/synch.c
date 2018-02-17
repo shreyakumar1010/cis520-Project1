@@ -216,7 +216,7 @@ void lock_acquire (struct lock *lock)
   if(lock->holder!=NULL)
    {
       thread_current()->waiting_for = lock;
-      //donate_priority(thread_current());   ERRORS ARE HAPPENING HERE DAWG
+      donate_priority(thread_current());   ERRORS ARE HAPPENING HERE DAWG
       list_insert_ordered(&lock->holder->list_of_priority_donations, &thread_current()-> donated_elem, (list_less_func*) & true_if_higher_priority, NULL);
    }
 
