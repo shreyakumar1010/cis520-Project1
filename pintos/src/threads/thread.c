@@ -202,7 +202,9 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
 
   /* Add to run queue. */
   thread_unblock (t);
+  old_level = intr_disable();
   yield_thread_if_no_longer_max();
+  intr_set_level(old_level);
   return tid;
 }
 
@@ -293,7 +295,7 @@ void thread_exit (void)
   /* Remove thread from all threads list, set our status to dying,
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
-  //intr_disable ();
+  intr_disable ();
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
