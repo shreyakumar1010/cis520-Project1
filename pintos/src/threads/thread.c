@@ -243,6 +243,8 @@ void thread_unblock (struct thread *t)
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
   
+  //list_push_back (&ready_list, &t->elem)
+  //threads ranked by priority instead of FCFS
   list_insert_ordered(&ready_list, &t->elem, (list_less_func *)&true_if_higher_priority, NULL);
 	
   t->status = THREAD_READY;
@@ -314,7 +316,8 @@ void thread_yield (void)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  if (cur != idle_thread) 
+  if (cur != idle_thread)
+    //using ordered list now instead of FCFS	  
     list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL);
   cur->status = THREAD_READY;
   
@@ -367,10 +370,6 @@ void thread_set_priority (int new_priority)
 /* Returns the current thread's priority. */
 int thread_get_priority (void) 
 {
-  //enum intr_level old_level = intr_disable();
-  //int tempvar = thread_current()->priority;
-  //intr_set_level (old_level); 	
-  //return tempvar;
 	return thread_current()-> priority;
 }
 
@@ -465,17 +464,16 @@ static void init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
   
-  
+  sema_init(&t->timer_sem, 0);
 
   //old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
   //intr_set_level (old_level);
-  t-> initial_priority = priority;
-  t->waiting_for = NULL;	
+	
+  // initializing priority & list stuff	
   list_init(&t-> list_of_priority_donations);
-  
-
-  sema_init(&t->timer_sem, 0);
+  t-> initial_priority = priority;
+  t-> waiting_for = NULL;	
 }
 
 
@@ -637,23 +635,35 @@ bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *
   struct thread *threadA = list_entry(A, struct thread, elem);
   struct thread *threadB = list_entry(B, struct thread, elem);
   
-  if (threadA->priority > threadB->priority) {return true;}
-  else return false;
+  if (threadA->priority > threadB->priority) 
+     return true;
+  else 
+	  return false;
 }
 
 
 void donate_priority(struct thread *t)
 {
-  int numNestedDonation =0;
-  struct lock *l = t->waiting_for;
-  while(l && numNestedDonation < MAX_NESTED_DONATION_LEVEL)
+  int DonationDepth =0;
+  struct lock *lochness = t->waiting_for;
+  while(lochness && DonationDepth < 8)
   {  
-     numNestedDonation++;
-     if(!l->holder){return;}
-     if(l->holder->priority >= t->priority){return;}  
-     l->holder->priority = t->priority;
-     t= l->holder;
-     l= t->waiting_for;
+    //maybe check to be sure the thread priority is set and determined
+    ASSERT(intr_get_level()==INTR_OFF);
+    //assert if its not a thread.
+    ASSERT(is_thread(t));  
+	  
+     if(lochness->holder == NULL)
+	     return;
+     if( t->priority < lochness->holder->priority)
+     	     return;  
+	  
+     //Now lettuce donate  
+     lochness->holder->priority = t->priority;
+     //Nested variables  	  
+     t = lochness->holder;
+     lochness = t->waiting_for;
+     DonationDepth++;
 	  
   }
 }
@@ -676,12 +686,6 @@ void donate_priority(struct thread *t)
       struct thread *threadHoldingLock = t->waiting_for->holder; 
       ASSERT(threadHoldingLock!=t);
       // if this is not the current thread then it has already donated, we should undo that donation
-      if(thread_current()!=t)
-      {
-        //undo_donation(t); //NEED TO IMPLEMENT THIS FUNCTION
-	      
-  
-      }
 	    
       //priority change happens in calculate_and_set_priority
       if(threadHoldingLock != NULL)
@@ -704,7 +708,6 @@ void donate_priority(struct thread *t)
     
   }*/
   
-//}
 
 
 void calculate_and_set_priority(struct thread *t)
