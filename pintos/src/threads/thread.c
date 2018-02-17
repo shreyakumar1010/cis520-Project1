@@ -731,41 +731,30 @@ void calculate_and_set_priority(struct thread *t)
  // return return_priority;
 }
 
-
-void yield_thread_if_no_longer_max(void)
+/* Sent thread is yielded as long as its priority is lower than than the priority of 
+   the thread at the top of the ready list */
+void yield_thread_if_no_longer_max(struct thread * toYield)
 {
-	if ( list_empty(&ready_list) )
+  if (list_empty(&ready_list))
       		return;
   struct thread *t = list_entry(list_front(&ready_list),struct thread, elem);
-  /*if (intr_context())
-    {
-      thread_ticks++;
-      if ( thread_current()->priority < t->priority ||
-	   (thread_ticks >= TIME_SLICE &&
-	    thread_current()->priority == t->priority) )
-	{
-	  intr_yield_on_return();
-	}
-      return;
-    }*/
 	
-   if( (thread_current() -> priority) < t -> priority)
+  if(toYield->priority < t->priority)
      thread_yield();
 
 }
-void remove_with_lock(struct lock *lock)
+void shared_lock_removal(struct lock *lock, struct thread *Threddy)
 {
-  struct list_elem *e = list_begin(&thread_current()->list_of_priority_donations);
-  struct list_elem *next;
-  while (e != list_end(&thread_current()->list_of_priority_donations))
+  struct list_elem *elem = list_begin(&Threddy->list_of_priority_donations);
+  struct list_elem *next_elem;
+  while (elem != list_end(&Threddy->list_of_priority_donations))
     {
-      struct thread *t = list_entry(e, struct thread, donated_elem);
-      next = list_next(e);
+      struct thread *t = list_entry(elem, struct thread, donated_elem);
+      next_elem = list_next(elem);
+      // if the lock t is waiting for is the same as the lock supplied in the parameters, it removes it
       if (t->waiting_for == lock)
-	{
-	  list_remove(e);
-	}
-      e = next;
+	  list_remove(elem);
+      elem = next_elem;
     }
 }
 
