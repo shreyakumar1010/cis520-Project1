@@ -635,8 +635,7 @@ void donate_priority(struct thread *t)
       if(thread_current()!=t)
       {
         //undo_donation(t); //NEED TO IMPLEMENT THIS FUNCTION
-	        struct list_elem *item_in_list = list_begin(&thread_current()->list_of_priority_donations);
-                struct list_elem *next_elem;
+	       
 
   
       }
