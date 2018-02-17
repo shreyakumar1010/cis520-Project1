@@ -202,7 +202,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   thread_unblock (t);
   old_level = intr_disable();
  
-  yield_thread_if_no_longer_max();
+  yield_thread_if_no_longer_max(thread_current());
   intr_set_level(old_level);
   return tid;
 }
@@ -359,7 +359,7 @@ void thread_set_priority (int new_priority)
   }
   else  
   {
-         yield_thread_if_no_longer_max();
+         yield_thread_if_no_longer_max(thread_current());
   }
   intr_set_level(old_level);
 }
