@@ -129,7 +129,6 @@ void sema_up (struct semaphore *sema)
   sema->value++;
   if(!intr_context()) //IS THIS REAL LIFE 
 	   //or is it just fantasy?
-	
     yield_thread_if_no_longer_max(thread_current());
     //top thread could no longer be the highest priority thread
    
@@ -214,7 +213,7 @@ void lock_acquire (struct lock *lock)
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
    
-   enum intr_level old_level = intr_disable();
+   //enum intr_level old_level = intr_disable();
    
   // if the lock is being held we need to donate
   	
@@ -222,15 +221,16 @@ void lock_acquire (struct lock *lock)
    {        
       thread_current()->waiting_for = lock;
       
+     //list here
      //donate_priority(thread_current());   
       list_insert_ordered(&lock->holder->list_of_priority_donations, &thread_current()-> donated_elem, (list_less_func*) & true_if_higher_priority, NULL);
    }
 
   sema_down (&lock->semaphore);
-  thread_current()->waiting_for = NULL;
   lock->holder = thread_current ();
+  thread_current()->waiting_for = NULL;
 
-   intr_set_level(old_level);
+   //intr_set_level(old_level);
 }
 
 
