@@ -706,7 +706,24 @@ int calculate_and_set_priority(struct thread *t)
 
 void yield_thread_if_no_longer_max(void)
 {
-   if( (thread_current() -> priority) > (list_entry(list_begin(&ready_list), struct thread, elem)-> priority))
+	if ( list_empty(&ready_list) )
+    {
+      return;
+    }
+  struct thread *t = list_entry(list_front(&ready_list),
+				struct thread, elem);
+  if (intr_context())
+    {
+      thread_ticks++;
+      if ( thread_current()->priority < t->priority ||
+	   (thread_ticks >= TIME_SLICE &&
+	    thread_current()->priority == t->priority) )
+	{
+	  intr_yield_on_return();
+	}
+      return;
+    }
+   if( (thread_current() -> priority) < t -> priority)
    {
      thread_yield();
    }
