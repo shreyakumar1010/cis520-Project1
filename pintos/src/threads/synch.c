@@ -68,12 +68,14 @@ void sema_down (struct semaphore *sema)
   old_level = intr_disable ();
   while (sema->value == 0) 
     {
-      //i dont know if we actually have to have priority dontations for semaphores
-      donate_priority(thread_current());
-     
+      //i dont know if we actually have to have priority dontations for semaphores. 
+	  // WE DO NOW
+     donate_priority(thread_current());
+	
+     // add list here  
      list_insert_ordered(&sema->waiters, &thread_current()->elem,  (list_less_func *) &true_if_higher_priority, NULL); 
      
-     thread_block ();
+     thread_block();
     }
   sema->value--;
   intr_set_level (old_level);
@@ -115,7 +117,9 @@ void sema_up (struct semaphore *sema)
   enum intr_level old_level=  intr_disable ();
 
   ASSERT (sema != NULL);
- 
+  //ASSERT (sanity == NULL);
+ //ASSERT( BAC >= .1);
+	
   if (!list_empty (&sema->waiters)) 
   { 
     // Sort the list
@@ -123,12 +127,11 @@ void sema_up (struct semaphore *sema)
     thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
   sema->value++;
-   if(!intr_context()) //IS THIS REAL LIFE 
+  /* if(!intr_context()) //IS THIS REAL LIFE 
 	   //or is it just fantasy?
-   {
+	   */
     yield_thread_if_no_longer_max(thread_current());
-   }
-	   //top thread could no longer be the highest priority thread
+    //top thread could no longer be the highest priority thread
    
   intr_set_level (old_level);
 }
