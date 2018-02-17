@@ -635,6 +635,8 @@ void donate_priority(struct thread *t)
       if(thread_current()!=t)
       {
         //undo_donation(t); //NEED TO IMPLEMENT THIS FUNCTION
+	      int loop = -1;
+	       ASSERT (loop == 0);
 	       
 
   
