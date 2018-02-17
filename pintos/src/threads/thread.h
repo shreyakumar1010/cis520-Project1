@@ -155,7 +155,7 @@ void thread_foreach (thread_action_func *, void *);
 
 /* compares wakeuptime between threads, used to orders lists in timer.c*/
 bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void *aux UNUSED);
-void remove_with_lock (struct lock *lock);
+
 
 int thread_get_priority (void);
 void thread_set_priority (int);
