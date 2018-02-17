@@ -267,7 +267,7 @@ void lock_release (struct lock *lock)
    
   enum intr_level old_level = intr_disable();
    
-  struct lis_elem *e;
+  struct list_elem *e;
 for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
 {
 	
