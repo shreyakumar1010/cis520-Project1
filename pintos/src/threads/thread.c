@@ -59,8 +59,6 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
 
-static int MAX_NESTED_DONATION_LEVEL = 8;
-
 static void kernel_thread (thread_func *, void *aux);
 
 static void idle (void *aux UNUSED);
@@ -737,12 +735,9 @@ void calculate_and_set_priority(struct thread *t)
 void yield_thread_if_no_longer_max(void)
 {
 	if ( list_empty(&ready_list) )
-    {
-      return;
-    }
-  struct thread *t = list_entry(list_front(&ready_list),
-				struct thread, elem);
-  if (intr_context())
+      		return;
+  struct thread *t = list_entry(list_front(&ready_list),struct thread, elem);
+  /*if (intr_context())
     {
       thread_ticks++;
       if ( thread_current()->priority < t->priority ||
@@ -752,11 +747,10 @@ void yield_thread_if_no_longer_max(void)
 	  intr_yield_on_return();
 	}
       return;
-    }
+    }*/
+	
    if( (thread_current() -> priority) < t -> priority)
-   {
      thread_yield();
-   }
 
 }
 void remove_with_lock(struct lock *lock)
