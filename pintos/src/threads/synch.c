@@ -306,6 +306,28 @@ struct semaphore_elem
     struct semaphore semaphore;         /* This semaphore. */
 };
 
+/* Ranks semaphore lists by priority then pulls the top threads from that list and compares their priorities*/
+bool rank_sema_priority(const struct list_elem *a, const struct list_elem *b)
+{
+  struct semaphore_elem * semA = list_entry(a, struct semaphore_elem, elem);
+  struct semaphore_elem * semB = list_entry(b, struct semaphore_elem, elem);
+
+  if(list_empty(&semB -> semaphore.waiters))
+	return true;
+  if(list_empty(&semA -> semaphore.waiters))
+	return false;
+
+  list_sort(&semA -> semaphore.waiters, (list_less_func *) &true_if_higher_priority, NULL);
+  list_sort(&semB -> semaphore.waiters, (list_less_func *) &true_if_higher_priority, NULL);
+
+  struct thread *A = list_entry(list_front(&semA ->semaphore.waiters), struct thread, elem);
+  struct thread *B = list_entry(list_front(&semB ->semaphore.waiters), struct thread, elem);
+
+  if(A->priority > B->priority)
+	  return true;
+  else 
+	  return false;
+}
 
 /* Initializes condition variable COND.  A condition variable
    allows one piece of code to signal a condition and cooperating
@@ -374,7 +396,7 @@ void cond_signal (struct condition *cond, struct lock *lock UNUSED)
 
   if (!list_empty (&cond->waiters)) 
   {
-    //list_sort(&cond->waiters,  (list_less_func *) &rank_sema_priority, NULL);
+    list_sort(&cond->waiters,  (list_less_func *) &rank_sema_priority, NULL);
     sema_up (&list_entry (list_pop_front (&cond->waiters),struct semaphore_elem, elem)->semaphore);
   }
 }
@@ -393,33 +415,4 @@ void cond_broadcast (struct condition *cond, struct lock *lock)
 
   while (!list_empty (&cond->waiters))
     cond_signal (cond, lock);
-}
-bool rank_sema_priority(const struct list_elem *a, const struct list_elem *b)
-{
-  struct semaphore_elem * semA = list_entry(a, struct semaphore_elem, elem);
-  struct semaphore_elem * semB = list_entry(b, struct semaphore_elem, elem);
-
-  if(list_empty(&semB -> semaphore.waiters))
-  {
-	return true;
-  }
-  if(list_empty(&semA -> semaphore.waiters))
-  {
-	return false;
-  }
-
-  list_sort(&semA -> semaphore.waiters, (list_less_func *) &true_if_higher_priority, NULL);
-  list_sort(&semB -> semaphore.waiters, (list_less_func *) &true_if_higher_priority, NULL);
-
-  struct thread *ta = list_entry(list_front(&semA ->semaphore.waiters), struct thread, elem);
-  struct thread *tb = list_entry(list_front(&semB ->semaphore.waiters), struct thread, elem);
-
-  if(ta->priority > tb->priority)
-  {
-	  return true;
-  }
-  else 
-  {
-	  return false;
-  }
 }
