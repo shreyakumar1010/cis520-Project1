@@ -707,29 +707,22 @@ void donate_priority(struct thread *t)
 
 void calculate_and_set_priority(struct thread *t)
 {
+   t->priority = t->initial_priority;
+	
   if(list_empty(&t->list_of_priority_donations)){return;}
   
-   int return_priority = -1;
-  //enum intr_level old_level = intr_disable();
-  
-  if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
-  {
-	  
-    //the top element of the donation list should have the highest return_priority
-    struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donations), struct thread, donated_elem);
+      //the top element of the donation list should have the highest return_priority
+    struct thread *topOfDonationList = list_entry(list_front(&t->list_of_priority_donations), struct thread, donated_elem);
     return_priority = topOfDonationList-> priority;
     
   }
 
   //now we determine if the dontated priority is higher than the initial priority
-  if(return_priority > t->initial_priority)
+  if(topOfDonationsList->priority > t->initial_priority)
   {
-    t->priority = return_priority;
+    t->priority = topOfDonationsList -> priority;
   }
-  else
-  {
-    t->priority = t->initial_priority;
-  }
+  
  // remove_and_insert_thread_after_priority_change(t);
   //intr_set_level(old_level);
  // return return_priority;
