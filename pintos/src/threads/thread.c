@@ -713,7 +713,7 @@ void calculate_and_set_priority(struct thread *t)
   
       //the top element of the donation list should have the highest return_priority
     struct thread *topOfDonationList = list_entry(list_front(&t->list_of_priority_donations), struct thread, donated_elem);
-    return_priority = topOfDonationList-> priority;
+
     
   }
 
