@@ -126,7 +126,7 @@ void sema_up (struct semaphore *sema)
    if(!intr_context()) //IS THIS REAL LIFE 
 	   //or is it just fantasy?
    {
-    yield_thread_if_no_longer_max(current_thread);
+    yield_thread_if_no_longer_max(thread_current());
    }
 	   //top thread could no longer be the highest priority thread
    
@@ -272,9 +272,9 @@ void lock_release (struct lock *lock)
   lock->holder = NULL;
  // struct list_elem *e;
 //for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
-  struct list_elem *elem = list_begin(&thread_current->list_of_priority_donations);
+  struct list_elem *elem = list_begin(&thread_current()->list_of_priority_donations);
   struct list_elem *next_elem;
-  while (elem != list_end(&thread_current->list_of_priority_donations))
+  while (elem != list_end(&thread_current()->list_of_priority_donations))
     {
       struct thread *t = list_entry(elem, struct thread, donated_elem);
       next_elem = list_next(elem);
