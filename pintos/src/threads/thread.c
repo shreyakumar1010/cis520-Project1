@@ -643,8 +643,8 @@ void donate_priority(struct thread *t)
 	    
       //priority change happens in calculate_and_set_priority
       if(threadHoldingLock != NULL)
-      { int loop = -1; ASSERT(loop == 0);
-        calculate_and_set_priority(threadHoldingLock);   //IMPLEMENT     
+      { 
+        calculate_and_set_priority(threadHoldingLock);   
         
         //add this donation to the list_of_priority_donations
         list_insert_ordered(&threadHoldingLock->list_of_priority_donations,&threadHoldingLock->donated_elem, (list_less_func *) &true_if_higher_priority, NULL);
@@ -669,9 +669,10 @@ int calculate_and_set_priority(struct thread *t)
   int return_priority = -1; //initialized return priority to negative 1
 
   enum intr_level old_level = intr_disable();
-  
+  int loop = -1; ASSERT(loop == 0);
   if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
   {
+	  int ifloops = -1; ASSERT(ifloops == 0);
     //the top element of the donation list should have the highest return_priority
     struct thread *topOfDonationList = list_entry(list_begin(&t->list_of_priority_donations), struct thread, donated_elem);
     return_priority = topOfDonationList-> priority;
