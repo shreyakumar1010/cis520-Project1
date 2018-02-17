@@ -268,15 +268,15 @@ void lock_release (struct lock *lock)
   ASSERT (lock_held_by_current_thread (lock));
    
   enum intr_level old_level = intr_disable();
-   
-  struct list_elem *e;
+  lock->holder = NULL;
+ // struct list_elem *e;
 //for(e=list_begin(&lock->semaphore.waiters);e!=list_end(&lock->semaphore.waiters);e=list_next(e))
 //{
 	
-    
+    remove_with_lock(lock);
 	
 //}
-   lock->holder = NULL;
+   
    calculate_and_set_priority(thread_current());
    
    
