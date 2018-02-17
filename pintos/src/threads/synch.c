@@ -70,7 +70,7 @@ void sema_down (struct semaphore *sema)
     {
       //i dont know if we actually have to have priority dontations for semaphores
       donate_priority(thread_current());
-      //list_push_back (&sema->waiters, &thread_current ()->elem); //This will no longer be used
+     
      list_insert_ordered(&sema->waiters, &thread_current()->elem,  (list_less_func *) &true_if_higher_priority, NULL); 
      
      thread_block ();
@@ -112,11 +112,11 @@ bool sema_try_down (struct semaphore *sema)
    This function may be called from an interrupt handler. */
 void sema_up (struct semaphore *sema) 
 {
-  enum intr_level old_level;
+  enum intr_level old_level=  intr_disable ();
 
   ASSERT (sema != NULL);
 
-  old_level = intr_disable ();
+ 
    
   if (!list_empty (&sema->waiters)) 
   { 
@@ -125,9 +125,11 @@ void sema_up (struct semaphore *sema)
     thread_unblock (list_entry (list_pop_front (&sema->waiters),struct thread, elem));
   }
   sema->value++;
-   
-  yield_thread_if_no_longer_max();
-  //top thread could no longer be the highest priority thread
+   if(!intr_context()) //IS THIS REAL LIFE
+   {
+    yield_thread_if_no_longer_max();
+   }
+	   //top thread could no longer be the highest priority thread
    
   intr_set_level (old_level);
 }
@@ -213,7 +215,7 @@ void lock_acquire (struct lock *lock)
    enum intr_level old_level = intr_disable();
    
   // if the lock is being held we need to donate
-  	int loop = -1;
+  	
   if(lock->holder!=NULL)
    {        
       thread_current()->waiting_for = lock;
@@ -223,9 +225,9 @@ void lock_acquire (struct lock *lock)
    }
 
   sema_down (&lock->semaphore);
+  thread_current()->waiting_for = NULL;
   lock->holder = thread_current ();
-  // release the lock
-   thread_current()->waiting_for = NULL;  // THIS LINE MIGHT BE NEEDED UNSURE
+
    intr_set_level(old_level);
 }
 
