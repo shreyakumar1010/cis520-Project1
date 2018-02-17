@@ -628,12 +628,11 @@ void donate_priority(struct thread *t)
     
     //  if this thread is locked to another thread
     if(t->waiting_for != NULL) 
-    {          int loop = -1;
-	       ASSERT (loop == 0);
+    {         
 	       
 
       //selects thread that is being waited for aka the one holding the lock
-      struct thread *threadHoldingLock = t->waiting_for->holder;
+      struct thread *threadHoldingLock = t->waiting_for->holder; 
       // if this is not the current thread then it has already donated, we should undo that donation
       if(thread_current()!=t)
       {
@@ -644,7 +643,7 @@ void donate_priority(struct thread *t)
 	    
       //priority change happens in calculate_and_set_priority
       if(threadHoldingLock != NULL)
-      {
+      { int loop = -1; ASSERT(loop == 0);
         calculate_and_set_priority(threadHoldingLock);   //IMPLEMENT     
         
         //add this donation to the list_of_priority_donations
