@@ -652,7 +652,7 @@ void donate_priority(struct thread *t)
       if(threadHoldingLock != NULL)
       { 
          calculate_and_set_priority(threadHoldingLock);
-	 ASSERT(is_thread(waiter));
+	 ASSERT(is_thread(threadHoldingLock));
         
         //add this donation to the list_of_priority_donations
         list_insert_ordered(&threadHoldingLock->list_of_priority_donations,&threadHoldingLock->donated_elem, (list_less_func *) &true_if_higher_priority, NULL);
