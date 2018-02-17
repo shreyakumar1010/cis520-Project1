@@ -727,6 +727,21 @@ void yield_thread_if_no_longer_max(void)
    }
 
 }
+void remove_with_lock(struct lock *lock)
+{
+  struct list_elem *e = list_begin(&thread_current()->donations);
+  struct list_elem *next;
+  while (e != list_end(&thread_current()->donations))
+    {
+      struct thread *t = list_entry(e, struct thread, donation_elem);
+      next = list_next(e);
+      if (t->wait_on_lock == lock)
+	{
+	  list_remove(e);
+	}
+      e = next;
+    }
+}
 
 void thread_set_nice(int nice UNUSED)
 {}
