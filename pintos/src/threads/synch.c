@@ -399,7 +399,7 @@ void cond_signal (struct condition *cond, struct lock *lock UNUSED)
   if (!list_empty (&cond->waiters)) 
   {
 	  //LOOK AT ME
-    list_sort(&cond->waiters,  (list_less_func*) & true_if_higher_priority, NULL);
+    list_sort(&cond->waiters,  (list_less_func*) & rank_sema_priority, NULL);
     sema_up (&list_entry (list_pop_front (&cond->waiters),struct semaphore_elem, elem)->semaphore);
 	//sema_up (&list_entry (list_pop_back (&cond->waiters),struct semaphore_elem, elem)->semaphore);  
   }
