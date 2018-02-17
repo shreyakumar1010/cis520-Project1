@@ -10,7 +10,7 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
-#include "devices/timer.h"
+//#include "devices/timer.h"
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
@@ -135,9 +135,9 @@ void thread_tick (void)
   else
     kernel_ticks++;
 
-  /* Enforce preemption. */
+ /* Enforce Premption
   if (++thread_ticks >= TIME_SLICE)
-    intr_yield_on_return ();
+    intr_yield_on_return ();*/
 }
 
 
@@ -203,6 +203,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   /* Add to run queue. */
   thread_unblock (t);
   old_level = intr_disable();
+ 
   yield_thread_if_no_longer_max();
   intr_set_level(old_level);
   return tid;
@@ -342,19 +343,36 @@ void thread_foreach (thread_action_func *func, void *aux)
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void thread_set_priority (int new_priority) 
 {
+  enum intr_level old_level = int_disable();	  
+  
+  int previous_priority = thread_current() -> priority;
+  
   thread_current ()->initial_priority = new_priority;
+	
   calculate_and_set_priority(thread_current());
-  yield_thread_if_no_longer_max();
+	
+  if(previous_priority < thread_current()->priority)
+  {
+	  donate_priority(thread_current());
+  }
+	if(previous_priority > thread_current()->priority)
+	{
+            yield_thread_if_no_longer_max();
+	}
+	intr_set_level(old_level);
 }
 
 
 /* Returns the current thread's priority. */
 int thread_get_priority (void) 
 {
-  return thread_current ()->priority;
+  enum intr_level old_level = intr_disable();
+  int tempvar = thread_current()->priority;
+  intr_set_level (old_level); 	
+  return tempvar;
 }
 
-//
+
 
 
 /* Idle thread.  Executes when no other thread is ready to run.
@@ -445,12 +463,15 @@ static void init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
   
-  t-> initial_priority = priority;
-  list_init(&t-> list_of_priority_donations);
+  
 
   //old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
   //intr_set_level (old_level);
+  t-> initial_priority = priority;
+  t->waiting_for = NULL;	
+  list_init(&t-> list_of_priority_donations);
+  
 
   sema_init(&t->timer_sem, 0);
 }
@@ -621,9 +642,21 @@ bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *
 
 void donate_priority(struct thread *t)
 {
-  //int numNestedDonation =0;
+  int numNestedDonation =0;
+  struct lock l* = t->waiting_for;
+  while(l & numNestedDonation < MAX_NESTED_DONATION_LEVEL)
+  {  
+     numNestedDonation++;
+     if(!l->holder){return;}
+     if(l->holder->priority >= t->priority){return;}  
+     l->holder->priority = t->priority;
+     t= l->holder;
+     l= t->waiting_for;
+	  
+  }
+}
   //while(numNestedDonation <= MAX_NESTED_DONATION_LEVEL)//loop through for nested donations
-  while(true)
+  /*while(true)
   {     
     //maybe check to be sure the thread priority is set and determined
     ASSERT(intr_get_level()==INTR_OFF);
@@ -667,16 +700,17 @@ void donate_priority(struct thread *t)
     }
     else {break;} //thread has no threadHoldingLock
     
-  }
+  }*/
   
 }
 
 
-int calculate_and_set_priority(struct thread *t)
+void calculate_and_set_priority(struct thread *t)
 {
-  int return_priority = -1; //initialized return priority to negative 1
-
-  enum intr_level old_level = intr_disable();
+  if(list_empty(&t->donation)){return;}
+  
+   int retun_priority = -1;
+  //enum intr_level old_level = intr_disable();
   
   if(!list_empty(&t->list_of_priority_donations)) //if the list is not empty
   {
@@ -696,9 +730,9 @@ int calculate_and_set_priority(struct thread *t)
   {
     t->priority = t->initial_priority;
   }
-  remove_and_insert_thread_after_priority_change(t);
-  intr_set_level(old_level);
-  return return_priority;
+ // remove_and_insert_thread_after_priority_change(t);
+  //intr_set_level(old_level);
+ // return return_priority;
 }
 
 
