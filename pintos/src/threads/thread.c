@@ -357,7 +357,6 @@ void thread_set_priority (int new_priority)
 	  donate_priority(thread_current());
   }
   else  
-	//LOOK HERE if(previous_priority > thread_current()->priority) 
   {
          yield_thread_if_no_longer_max();
   }
@@ -368,10 +367,11 @@ void thread_set_priority (int new_priority)
 /* Returns the current thread's priority. */
 int thread_get_priority (void) 
 {
-  enum intr_level old_level = intr_disable();
-  int tempvar = thread_current()->priority;
-  intr_set_level (old_level); 	
-  return tempvar;
+  //enum intr_level old_level = intr_disable();
+  //int tempvar = thread_current()->priority;
+  //intr_set_level (old_level); 	
+  //return tempvar;
+	return thread_current()-> priority;
 }
 
 
