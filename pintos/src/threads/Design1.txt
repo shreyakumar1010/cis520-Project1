@@ -12,7 +12,6 @@ Corey Vessar <coreyvessar@k-state.edu>
 
 >>Sources: 
    https://github.com/tssurya/Pintos_Project/blob/master/pintos/src/threads/fixed-point.h
-   https://github.com/casimirn/CIS520/blob/master/cis520/pintos/src/threads/Design1.txt
    https://github.com/Hindol/pintos/blob/master/devices/timer.c
    https://knowledgejunk.net/2011/05/06/avoiding-busy-wait-in-timer_sleep-on-pintos/
    https://github.com/ilyanep/pintos-awesome/blob/master/src/devices/timer.c
@@ -41,11 +40,13 @@ Corey Vessar <coreyvessar@k-state.edu>
    		Added a int to keep track of the time to wakeup. Called time_to_wakeup. 
 		Added a list_elem sleeping_element as a timer element (what is put in the list)
 		Added a semaphore timer_sem to use as a locking mechanism
+		Added a lock to put around the critical code in order to ensure A3 is true
 
    bool lower_wakeuptime(const struct list_elem *A, const struct list_elem *B, void *aux UNUSED) 
    	in thread.h
 		prototype description of the function added that compares wakeuptime of two elements
 
+		
 ---- ALGORITHMS ----
 >> A2: Briefly describe what happens in a call to your timer_sleep(),
 >> including the effects of the timer interrupt handler.
@@ -56,7 +57,7 @@ Corey Vessar <coreyvessar@k-state.edu>
    "time_to_wakeup". The handler then disables the interrupts by clearing the interrupt flag. 
    After interrupts have been disabled,timer_sleep adds the current thread to the list of 
    sleeping threads in a FCFS basis. After this, the interrupts are reenabled by the interrupt 
-   handler setting the interrupt flag. //FIX END HERE
+   handler setting the interrupt flag. 
 
 
 >> A3: What steps are taken to minimize the amount of time spent in
@@ -72,10 +73,14 @@ Corey Vessar <coreyvessar@k-state.edu>
 
 >> A4: How are race conditions avoided when multiple threads call
 >> timer_sleep() simultaneously?
-
+    We added a lock around that list entry so that multiple threads can't do it at once, 
+    thereby preventing race conditions.
+   
 
 >> A5: How are race conditions avoided when a timer interrupt occurs
 >> during a call to timer_sleep()?
+    We turn off the interrupts around critical code, which effectively 
+    locks out the other threads. 
 
 
 ---- RATIONALE ----
@@ -83,7 +88,17 @@ Corey Vessar <coreyvessar@k-state.edu>
 >> A6: Why did you choose this design?  In what ways is it superior to
 >> other designs that you considered?
 
+At project start, we had minimal pintos/c/operating systems experience and were 
+unsure where to begin.   We consultued many online solutions that removed busy 
+waiting in timer.c and developed a hybrid solution to resolve that problem.  We 
+decided that inserting the elements in an ordered list would be the easiest to 
+comprehend.  There might be a faster solution using non-ordered list.   We then 
+decided to implement blocking using semaphores after reading the project one 
+session documents.  
 
+
+  
+  
 
              PRIORITY SCHEDULING
              ===================
@@ -94,73 +109,81 @@ Corey Vessar <coreyvessar@k-state.edu>
 >> `struct' member, global or static variable, `typedef', or
 >> enumeration.  Identify the purpose of each in 25 words or less.
 
+   int initial_priority
+   	in thread.h	
+		keeps track of given priority
+		
+   struct lock * waiting_for 
+        in thread.h 
+		the lock that a given thread is waiting to obtain
+   
+   struct list list_of_priority_donations
+        in thread.h
+		contains the list of threads that are waiting on locks.
+   
+   struct list_elem donated_elem
+   	in thread.h
+		item in the donation list
+
+
 >> B2: Explain the data structure used to track priority donation.
 
+        We used a list thats sorted by priority of threads attached to the thread 
+	structure to track donations made to that thread. In the thread structure, there is 
+	a lock to determine if the thread is eligible to donate its corresponding priority.
 
 ---- ALGORITHMS ----
 
 >> B3: How do you ensure that the highest priority thread waiting for
 >> a lock, semaphore, or condition variable wakes up first?
 
+   Because our list of waiting semaphores is sorted/inserted by priority, which we calculate 
+   using our rank_sema_priority and true_if_priority_higher functions
+
+
 >> B4: Describe the sequence of events when a call to lock_acquire()
 >> causes a priority donation.  How is nested donation handled?
 
+   First, we check if the lock has a thread that is holding it, then we set the current thread's 
+   waiting_for lock to the lock that the function lock_acquire provided. Then, it inserts the 
+   current thread's donation element into the lock holder's list of priority donations. Next, it 
+   calls sema down on the lock, and sets the current thread's lock to NULL, then sets the locked 
+   lock's holder to the current thread. 
+   We call our donate_priority function when sema_down is called. This function loops as long as 
+   the nested donation level is less than 8 and there is a lock on the thread. The first thing 
+   that happens in that while loop is that it checks to see if the lock has an owner. As long as 
+   it has a holder and the holder's priority is less than the current thread's priority, it sets 
+   the lock-holder's priority to the current thread's priority (donation) and increments the 
+   donation depth so that the loop can continue.
+
+
 >> B5: Describe the sequence of events when lock_release() is called
 >> on a lock that a higher-priority thread is waiting for.
+   The lock holder is set to null, pulls the first element off the current thread's priority 
+   donation list. Then it loops through the current priority list. Each time it loops through, 
+   it removes the thread that has macthing locks with the lock sent to lock release. 
+   Next, it calls the calculate and set priority function which is outside of the loop. 
+   Lastly, inside sema-up it checks to see if the current thread still has the max priority 
+   if not it yields the CPU to the thread with the maximum priority.
+   
 
 ---- SYNCHRONIZATION ----
 
 >> B6: Describe a potential race in thread_set_priority() and explain
 >> how your implementation avoids it.  Can you use a lock to avoid
 >> this race?
+   One possible scenario, would be when the thread priority variable is being updated
+   and the same time the interrupt handler is writing to the thread priority variable. 
+   These two changes could potential collide and cause incorrect changes to be made.
+   We avoid this by disabling interrupts at the beginning of the function and re-enabling 
+   at the end of the function. No we cannot use locks.
 
 ---- RATIONALE ----
 
 >> B7: Why did you choose this design?  In what ways is it superior to
 >> another design you considered?
-
-
-              ADVANCED SCHEDULER [EXTRA CREDIT]
-              =================================
-
----- DATA STRUCTURES ----
-
->> C1: Copy here the declaration of each new or changed `struct' or
->> `struct' member, global or static variable, `typedef', or
->> enumeration.  Identify the purpose of each in 25 words or less.
-
----- ALGORITHMS ----
-
->> C2: Suppose threads A, B, and C have nice values 0, 1, and 2.  Each
->> has a recent_cpu value of 0.  Fill in the table below showing the
->> scheduling decision and the priority and recent_cpu values for each
->> thread after each given number of timer ticks:
-
-timer  recent_cpu    priority   thread
-ticks   A   B   C   A   B   C   to run
------  --  --  --  --  --  --   ------
- 0
- 4
- 8
-12
-16
-20
-24
-28
-32
-36
-
->> C3: Did any ambiguities in the scheduler specification make values
->> in the table uncertain?  If so, what rule did you use to resolve
->> them?  Does this match the behavior of your scheduler?
-
->> C4: How is the way you divided the cost of scheduling between code
->> inside and outside interrupt context likely to affect performance?
-
----- RATIONALE ----
-
->> C5: Briefly critique your design, pointing out advantages and
->> disadvantages in your design choices.  If you were to have extra
->> time to work on this part of the project, how might you choose to
->> refine or improve your design?
+   We mapped out thread priority and nested donation allocation on the whiteboard and based our
+   solution on our understanding. The design is relatively easy to understand and we were able 
+   to track our changes through commits. 
+   
 
