@@ -202,7 +202,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   thread_unblock (t);
   old_level = intr_disable();
  
-  yield_thread_if_no_longer_max(thread_current());
+  yield_thread_if_no_longer_max(thread_current()); // Since we just created a new thread, it may be the new highest priority thread, so we need to check and then yield the cpu for it
   intr_set_level(old_level);
   return tid;
 }
@@ -243,7 +243,7 @@ void thread_unblock (struct thread *t)
   
   //list_push_back (&ready_list, &t->elem)
   //threads ranked by priority instead of FCFS
-  list_insert_ordered(&ready_list, &t->elem, (list_less_func *)&true_if_higher_priority, NULL);
+  list_insert_ordered(&ready_list, &t->elem, (list_less_func *)&true_if_higher_priority, NULL); // When a thread is unblocked, re add it to the ready list in an ordered by priority fashion
 	
   t->status = THREAD_READY;
   intr_set_level (old_level);
@@ -316,7 +316,7 @@ void thread_yield (void)
   old_level = intr_disable ();
   if (cur != idle_thread)
     //using ordered list now instead of FCFS	  
-    list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL);
+    list_insert_ordered (&ready_list, &cur->elem, (list_less_func *) &true_if_higher_priority, NULL); // instead of fcfs added to a ranked priority ready list
   cur->status = THREAD_READY;
   
   schedule ();
@@ -354,11 +354,11 @@ void thread_set_priority (int new_priority)
 	
   // if the thread's previous priority is lower than it's new priority, donate	
   if(previous_priority < thread_current()->priority)
-  {
+  {       //this is where donations should happen
 	  donate_priority(thread_current());
   }
   else  
-  {
+  {      //since we just set a threads priority, we need to check to make sure its not the new high priority thread, and if so yield the cpu
          yield_thread_if_no_longer_max(thread_current());
   }
   intr_set_level(old_level);
@@ -462,16 +462,16 @@ static void init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
   
-  sema_init(&t->timer_sem, 0);
+  sema_init(&t->timer_sem, 0); //for timer.c semaphore
 
   //old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
   //intr_set_level (old_level);
 	
   // initializing priority & list stuff	
-  list_init(&t-> list_of_priority_donations);
-  t-> initial_priority = priority;
-  t-> waiting_for = NULL;	
+  list_init(&t-> list_of_priority_donations); //initialize priority donation lists
+  t-> initial_priority = priority; //init initial priority
+  t-> waiting_for = NULL;	//init thread lock
 }
 
 
@@ -607,7 +607,7 @@ void remove_and_insert_thread_after_priority_change(struct thread * tochange)
 		list_remove(&tochange->elem);
     		list_insert_ordered(&ready_list, &tochange->elem, (list_less_func *) &true_if_higher_priority, NULL);
 	}
-}
+} // this ended up not being needed
 
 /* Returns a tid to use for a new thread. */
 static tid_t allocate_tid (void) 
@@ -642,9 +642,9 @@ bool true_if_higher_priority(const struct list_elem *A, const struct list_elem *
 
 void donate_priority(struct thread *t)
 {
-  int DonationDepth =0;
-  struct lock *lochness = t->waiting_for;
-  while(lochness && DonationDepth < 8)
+  int DonationDepth =0; //needed for maximum donation level break
+  struct lock *lochness = t->waiting_for; //set the lock to lochness
+  while(lochness && DonationDepth < 8) //recursive loop to handle nested donations
   {  
     //maybe check to be sure the thread priority is set and determined
     ASSERT(intr_get_level()==INTR_OFF);
