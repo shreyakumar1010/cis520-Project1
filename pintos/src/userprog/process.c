@@ -52,15 +52,18 @@ static void
 start_process (void *file_name_)
 {
   char *file_name = file_name_;
+  char * args; 
   struct intr_frame if_;
   bool success;
+   
+  file_name = strtok_r(file_name, " ", &args);
 
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
-  success = load (file_name, &if_.eip, &if_.esp);
+  success = load (file_name, &if_.eip, &if_.esp, &args);
 
   /* If load failed, quit. */
   palloc_free_page (file_name);
@@ -196,7 +199,7 @@ struct Elf32_Phdr
 #define PF_W 2          /* Writable. */
 #define PF_R 4          /* Readable. */
 
-static bool setup_stack (void **esp);
+static bool setup_stack (void **esp, const char *file_name, char ** args);
 static bool validate_segment (const struct Elf32_Phdr *, struct file *);
 static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
                           uint32_t read_bytes, uint32_t zero_bytes,
@@ -207,7 +210,7 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
    and its initial stack pointer into *ESP.
    Returns true if successful, false otherwise. */
 bool
-load (const char *file_name, void (**eip) (void), void **esp) 
+load (const char *file_name, void (**eip) (void), void **esp, char ** args) 
 {
   struct thread *t = thread_current ();
   struct Elf32_Ehdr ehdr;
@@ -303,7 +306,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
     }
 
   /* Set up stack. */
-  if (!setup_stack (esp))
+  if (!setup_stack (esp, file_name, args))
     goto done;
 
   /* Start address. */
@@ -428,7 +431,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 /* Create a minimal stack by mapping a zeroed page at the top of
    user virtual memory. */
 static bool
-setup_stack (void **esp) 
+setup_stack (void **esp, const char * file_name, char ** args) 
 {
   uint8_t *kpage;
   bool success = false;
@@ -440,9 +443,52 @@ setup_stack (void **esp)
       if (success)
         *esp = PHYS_BASE;
       else
-        palloc_free_page (kpage);
+      {
+         palloc_free_page (kpage);
+         return success;
+      }
     }
-  return success;
+   
+   char * token;
+   int temp = 2;
+   char ** arguments = malloc(temp*sizeof(char *));
+   int numArgs = 0;
+   for(token = (char *) file_name; token != NULL; token = strtok_r(NULL, " ", args))
+   {
+      *esp = *esp - (strlen(token)+1);
+      arguments[numArgs] = *esp;
+      numArgs ++;
+      if(numArgs >= temp)
+      {
+         temp = temp * 2;
+         arguments = realloc(arguments, temp*sizeof(char *));
+      }
+      memcpy(*esp, token, strlen(token) +1);
+   }
+   arguments[numArgs] = 0;
+   
+   int index = (size_t) *esp % 8;
+   if(index ! = NULL)
+   {
+      *esp = *esp - sizeof(char *);
+      memcpy(*esp, &arguments[index], sizeof(char *));
+   }
+   
+   for(index = numArgs; index >= 0; index --)
+   {
+      *esp = *esp - sizeof(char *);
+      memcpy(*esp, &arguments[index], sizeof(char *));
+   }
+   
+   *esp = *esp - sizeof(int);
+   memcpy(*esp, &numArgs, sizeof(int));
+   *esp = *esp - sizeof(void *);
+   memcpy(*esp, &arguments[numArgs], sizeof(void *));
+   free(arguments);
+   
+   hex_dump(0, *esp, (int)((size_t) PHYS_BASE - (size_t) * esp), true);
+   
+   return success;
 }
 
 /* Adds a mapping from user virtual address UPAGE to kernel
