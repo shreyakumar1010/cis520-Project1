@@ -8,6 +8,7 @@
 #include "userprog/gdt.h"
 #include "userprog/pagedir.h"
 #include "userprog/tss.h"
+#include "userprog/syscall.h"
 #include "filesys/directory.h"
 #include "filesys/file.h"
 #include "filesys/filesys.h"
@@ -30,6 +31,7 @@ tid_t
 process_execute (const char *file_name) 
 {
   char *fn_copy;
+  char *args; 
   tid_t tid;
 
   /* Make a copy of FILE_NAME.
@@ -38,6 +40,8 @@ process_execute (const char *file_name)
   if (fn_copy == NULL)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
+   
+  file_name = strtok_r((char *) file_name, " " , &args); 
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
@@ -52,9 +56,10 @@ static void
 start_process (void *file_name_)
 {
   char *file_name = file_name_;
-  char * args; 
+  char *args; 
   struct intr_frame if_;
   bool success;
+  struct thread * t = thread_current(); 
    
   file_name = strtok_r(file_name, " ", &args);
 
@@ -63,8 +68,13 @@ start_process (void *file_name_)
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
+   
   success = load (file_name, &if_.eip, &if_.esp, &args);
-
+  if(success == true)
+     t->child->loadflag = true;
+   else
+      t->child->loadflag = false;
+     
   /* If load failed, quit. */
   palloc_free_page (file_name);
   if (!success) 
@@ -92,15 +102,32 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  return -1;
+   struct child * child = get_child(child_tid);
+   if (child != NULL)
+   {
+      int status = child->status;
+      child->waiting = true;
+      while(!child->exiting)
+         barrier();
+      remove_child_process(child);
+      return status;
+   }
+   else 
+      return -1;
 }
 
 /* Free the current process's resources. */
 void
 process_exit (void)
 {
-  struct thread *cur = thread_current ();
+  struct thread *t = thread_current ();
   uint32_t *pd;
+   
+  close_files(-1);
+  remove_children();
+   
+  if(thread_alive(t->parent))
+     t->child->exiting = true;
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
