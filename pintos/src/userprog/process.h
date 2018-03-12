@@ -12,7 +12,7 @@ struct child_process {
   int pid;
   bool load;
   bool wait;
-  bool exit;
+  bool exiting;
   int status;
   struct lock wait_lock;
   struct list_elem elem;
