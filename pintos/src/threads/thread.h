@@ -111,6 +111,14 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+  
+    struct list children;
+    tid_t parent;
+    struct child_process * child;
+  
+    struct list files;
+    int file_desc;
+   
   };
 
 
