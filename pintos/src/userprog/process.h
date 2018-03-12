@@ -10,7 +10,7 @@ void process_activate (void);
 
 struct child_process {
   int pid;
-  int load;
+  bool load;
   bool wait;
   bool exit;
   int status;
