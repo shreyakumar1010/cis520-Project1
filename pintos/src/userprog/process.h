@@ -11,7 +11,7 @@ void process_activate (void);
 struct child_process {
   int pid;
   bool load;
-  bool wait;
+  bool waiting;
   bool exiting;
   int status;
   struct lock wait_lock;
