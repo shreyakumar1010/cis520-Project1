@@ -126,8 +126,8 @@ process_exit (void)
   close_files(-1);
   remove_children();
    
-  if(thread_alive(t->parent))
-     t->child->exiting = true;
+  if(t->parent->status == THREAD_DYING)
+     t->child->exiting = true; //BOOPITY
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
