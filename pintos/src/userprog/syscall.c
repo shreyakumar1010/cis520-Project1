@@ -156,7 +156,7 @@ void sys_halt (void)
 void sys_exit(int status)
 {
   struct thread * t = thread_current();
-  if(t->parent->status != THREAD_DYING)//BOOPITY
+  if(thread_alive(t->parent))
     t->child->status = status;
   printf("%s: exit(%d)\n", t->name, status);
   thread_exit();
