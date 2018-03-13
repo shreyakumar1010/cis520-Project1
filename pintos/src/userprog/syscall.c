@@ -329,6 +329,7 @@ void sys_close(int fd)
       file_close(f->file);
       list_remove(&f->file_elem);
       free(f);
+      lock_release(&syscall_lock);
       return;
     }
     else if (fd == -1)
@@ -338,7 +339,6 @@ void sys_close(int fd)
       free(f);
     }
     e = list_next(e);
-    }
   }
   lock_release(&syscall_lock);
 }        
