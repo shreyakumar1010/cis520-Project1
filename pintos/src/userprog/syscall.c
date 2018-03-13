@@ -203,7 +203,7 @@ int sys_open(const char * file)
   {
     struct file_desc *proc = malloc(sizeof(struct file_desc));
     proc->file = tempfile;
-    proc->proc = t->fd;
+    proc->fd = t->fd;
     t->fd++;
     list_push_back(&t->files, &proc->file_elem);
     lock_release(&syscall_lock);
@@ -227,7 +227,7 @@ struct file * get_file(int fd)
     }
     e = list_next(e);
   }   
-  return NULL;
+  return (NULL);
 }
 
 int sys_filesize(int fd)
