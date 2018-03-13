@@ -730,7 +730,7 @@ int thread_get_recent_cpu(void)
 bool thread_alive(struct thread *par)
 {
 	struct list_elem *e = list_begin(&all_list);
-	while(e != list_end(&all_list)
+	while(e != list_end(&all_list))
 	{
 		struct thread *t = list_entry(e, struct thread, allelem);
 		if(t->tid == par->tid)
