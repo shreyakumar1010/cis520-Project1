@@ -199,10 +199,6 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   sf->eip = switch_entry;
   sf->ebp = 0;
   intr_set_level(old_level);
-
-  /* Add to run queue. */
-  thread_unblock (t);
-  old_level = intr_disable();
  
   struct child_process *child = malloc(sizeof(struct child_process));
   child->loadflag = false;
@@ -210,6 +206,9 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   child->exiting = false;	
   child->pid = t->tid;
   list_push_back(&t->children, &child->childelem);
+	
+  thread_unblock (t);
+  old_level = intr_disable();
 	
   // Since we just created a new thread, it may be the new highest 
   //priority thread, so we need to check and then yield the cpu for it	
