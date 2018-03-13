@@ -134,8 +134,8 @@ process_exit (void)
       e = list_next(e);
    }
    
-  if(t->parent->status == THREAD_DYING)
-     t->child->exiting = true; //BOOPITY
+  if(thread_alive(t->parent))
+     t->child->exiting = true; 
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
