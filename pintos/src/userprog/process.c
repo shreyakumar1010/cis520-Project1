@@ -103,7 +103,6 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-   ASSERT(false);
    struct child_process * child = get_child(child_tid);
    if (child != NULL)
    {
@@ -113,9 +112,11 @@ process_wait (tid_t child_tid UNUSED)
          barrier();
       list_remove(&child->child_elem);
       free(child);
+      ASSERT(false);
       return status;
    }
    else 
+      ASSERT(false);
       return -1;
 }
 
