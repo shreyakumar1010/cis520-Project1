@@ -126,7 +126,7 @@ process_exit (void)
    
   sys_close(-1);
    struct list_elem *e = list_begin(&t->children);
-   while(e != list_end(&t->children)
+   while(e != list_end(&t->children))
    {
       struct child_process * child = list_entry(e, struct child, child_elem);
       list_remove(&child->child_elem);
