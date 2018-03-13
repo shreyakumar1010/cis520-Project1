@@ -503,7 +503,7 @@ setup_stack (void **esp, const char * file_name, char ** args)
    arguments[numArgs] = 0;
    
    int index = (size_t) *esp % 8;
-   if(index != NULL)
+   if((void *)index != NULL)
    {
       *esp = *esp - sizeof(char *);
       memcpy(*esp, &arguments[index], sizeof(char *));
