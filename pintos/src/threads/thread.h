@@ -113,7 +113,7 @@ struct thread
     unsigned magic;                     /* Detects stack overflow. */
   
     struct list children;
-    tid_t parent;
+    struct thread * parent;
     struct child_process * child;
   
     struct list files;
