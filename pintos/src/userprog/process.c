@@ -109,7 +109,8 @@ process_wait (tid_t child_tid UNUSED)
       child->waiting = true;
       while(!child->exiting)
          barrier();
-      remove_child_process(child);
+      list_remove(&child->child_elem);
+      free(child);
       return status;
    }
    else 
@@ -123,8 +124,17 @@ process_exit (void)
   struct thread *t = thread_current ();
   uint32_t *pd;
    
-  close_files(-1);
-  remove_children();
+  sys_close(-1);
+   
+   struct thread * t = thread_current();
+   struct list_elem *e = list_begin(&t->children);
+   while(e! = list_end(&t->children)
+   {
+      struct child * child = list_entry(e, struct child, child_elem);
+      list_remove(&child->child_elem);
+      free(child);
+      e = list_next(e);
+   }
    
   if(t->parent->status == THREAD_DYING)
      t->child->exiting = true; //BOOPITY
@@ -537,3 +547,4 @@ install_page (void *upage, void *kpage, bool writable)
   return (pagedir_get_page (t->pagedir, upage) == NULL
           && pagedir_set_page (t->pagedir, upage, kpage, writable));
 }
+
