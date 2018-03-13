@@ -168,7 +168,7 @@ pid_t sys_exec(const char * cmd_line)
   struct child_process * child = get_child(pid);
   while(child->loadflag == false)
     barrier();
-  if(child->loadflag == NULL)
+  if(!child->loadflag)
     return -1;
   return pid;
 }
@@ -198,7 +198,7 @@ int sys_open(const char * file)
 {
   struct thread * t = thread_current();
   lock_acquire(&syscall_lock);
-  struct file * tempfile = fileys_open(file);
+  struct file * tempfile = filesys_open(file);
   if(tempfile != NULL)
   {
     struct file_desc *proc = malloc(sizeof(struct file_desc));
@@ -359,7 +359,7 @@ int check_get_page(const void * vaddr)
   struct thread * t = thread_current();
   valid(vaddr);
   void * ptr = pagedir_get_page(t->pagedir, vaddr);
-  if(ptr ! = NULL)
+  if(ptr != NULL)
     return (int) ptr;
   else 
     sys_exit(-1);
