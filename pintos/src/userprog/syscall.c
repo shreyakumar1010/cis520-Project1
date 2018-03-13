@@ -165,7 +165,7 @@ void sys_exit(int status)
 pid_t sys_exec(const char * cmd_line)
 {
   pid_t pid = process_execute(cmd_line);
-  struct child * child = get_child(pid);
+  struct child_process * child = get_child(pid);
   while(child->loadflag == false)
     barrier();
   if(child->loadflag == NULL)
@@ -218,7 +218,7 @@ struct file * get_file(int fd)
   struct thread * t = thread_current();
   struct list_elem *e;
   e = list_begin(&t->files);
-  while(e!= list_end(&t->files)
+  while(e!= list_end(&t->files))
   {
     struct file_desc * filed = list_entry(e, struct file_desc, file_elem);
     if (fd == filed->fd)
