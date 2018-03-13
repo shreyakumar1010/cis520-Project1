@@ -117,6 +117,7 @@ struct thread
     struct child_process * child;
   
     struct list files;
+    int fd;
     int file_desc;
    
   };
