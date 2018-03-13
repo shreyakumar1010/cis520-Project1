@@ -363,6 +363,7 @@ int check_get_page(const void * vaddr)
     return (int) ptr;
   else 
     sys_exit(-1);
+    return -1;
 }
         
 struct child_process * get_child(int pid)
