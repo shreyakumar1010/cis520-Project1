@@ -125,8 +125,6 @@ process_exit (void)
   uint32_t *pd;
    
   sys_close(-1);
-   
-   struct thread * t = thread_current();
    struct list_elem *e = list_begin(&t->children);
    while(e! = list_end(&t->children)
    {
