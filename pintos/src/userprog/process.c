@@ -165,7 +165,6 @@ process_exit (void)
 void
 process_activate (void)
 {
-   ASSERT(false);
   struct thread *t = thread_current ();
 
   /* Activate thread's page tables. */
@@ -174,8 +173,9 @@ process_activate (void)
   /* Set thread's kernel stack for use in processing
      interrupts. */
   tss_update ();
+   ASSERT(false);
 }
-
+
 /* We load ELF binaries.  The following definitions are taken
    from the ELF specification, [ELF1], more-or-less verbatim.  */
 
