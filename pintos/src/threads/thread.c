@@ -7,12 +7,14 @@
 #include "threads/interrupt.h"
 #include "threads/intr-stubs.h"
 #include "threads/palloc.h"
+#include "threads/malloc.h"
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
 //#include "devices/timer.h"
 #ifdef USERPROG
 #include "userprog/process.h"
+#include "userprog/syscall.h"
 #endif
 
 /* Random value for struct thread's `magic' member.
@@ -472,6 +474,11 @@ static void init_thread (struct thread *t, const char *name, int priority)
   list_init(&t-> list_of_priority_donations); //initialize priority donation lists
   t-> initial_priority = priority; //init initial priority
   t-> waiting_for = NULL;	//init thread lock
+	
+  list_init(&t->files);
+  t->fd = 2;
+  list_init(&t->children);
+	t->parent = t;
 }
 
 
