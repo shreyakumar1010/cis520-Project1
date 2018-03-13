@@ -5,11 +5,11 @@ void syscall_init (void);
 
 struct lock syscall_lock;
 
-struct process_file
+struct file_desc
 {
   struct file *file;
   int fd;
-  struct list_elem elem;
+  struct list_elem file_elem;
 };
 
 int process_add_file (struct file *f);
