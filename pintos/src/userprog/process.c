@@ -134,7 +134,7 @@ process_exit (void)
       e = list_next(e);
    }
    
-  if(t->parent->thread_status == THREAD_DYING)
+  if(t->parent->status == THREAD_DYING)
      t->child->exiting = true; //BOOPITY
 
   /* Destroy the current process's page directory and switch back
