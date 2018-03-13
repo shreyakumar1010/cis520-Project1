@@ -487,7 +487,7 @@ static void init_thread (struct thread *t, const char *name, int priority)
   t->fd = 2;
   list_init(&t->children);
   t->child = NULL;	
-  t->parent = t; //BOOPITY maybe this should be set to NULL
+  t->parent = NULL; //BOOP
 }
 
 
