@@ -104,20 +104,19 @@ int
 process_wait (tid_t child_tid UNUSED) 
 {
    struct child_process * child = get_child(child_tid);
-   if (child != NULL)
+   if (child != NULL && !child->waiting)
    {
-      int status = child->status;
       child->waiting = true;
       while(!child->exiting)
          barrier();
+      int status = child->status;
       list_remove(&child->child_elem);
       free(child);
       ASSERT(false);
       return status;
    }
    else 
-      ASSERT(false);
-      return -1;
+      return (-1);
 }
 
 /* Free the current process's resources. */
