@@ -29,7 +29,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   //printf ("system call!\n");
   //thread_exit ();
   int arguments[3];
-  if (!valid (void *) f->esp))
+  if (!valid (const void *) f->esp)
   {
     sys_exit(-1);
   }
@@ -90,7 +90,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       case SYS_READ: 
       {
         pull_args(f, &arguments[0], 3);
-        char * local_buffer = (char *) buffer;
+        char * local_buffer = (char *) arguments[1];
         int i = 0;
         while (i < arguments[2])
         {
