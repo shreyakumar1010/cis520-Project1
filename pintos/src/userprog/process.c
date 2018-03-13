@@ -173,7 +173,6 @@ process_activate (void)
   /* Set thread's kernel stack for use in processing
      interrupts. */
   tss_update ();
-   ASSERT(false);
 }
 
 /* We load ELF binaries.  The following definitions are taken
