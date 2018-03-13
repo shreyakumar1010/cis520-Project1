@@ -1,5 +1,19 @@
 #ifndef USERPROG_SYSCALL_H
 #define USERPROG_SYSCALL_H
+#include "userprog/pagedir.h"
+#include "userprog/process.h"
+#include <stdio.h>
+#include <syscall-nr.h>
+#include "threads/interrupt.h"
+#include "threads/thread.h"
+#include "threads/malloc.h"
+#include "threads/synch.h"
+#include "threads/vaddr.h"
+#include <user/syscall.h>
+#include "devices/input.h"
+#include "decides/shutdown.h"
+#include "filesys/file.h"
+#include "filesys/filesys.h"
 
 void syscall_init (void);
 bool valid (const void *vaddr);
