@@ -733,7 +733,7 @@ bool thread_alive(struct thread *par)
 	while(e != list_end(&all_list)
 	{
 		struct thread *t = list_entry(e, struct thread, allelem);
-		if(t->parent->pid == par->pid)
+		if(t->parent->tid == par->tid)
 			return true;
 		e = list_next(e);
 	}
