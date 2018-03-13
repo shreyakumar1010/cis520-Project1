@@ -365,7 +365,18 @@ int check_get_page(const void * vaddr)
     sys_exit(-1);
 }
         
-        
+struct child_process * get_child(int pid)
+{
+  struct thread * t = thread_current();
+  struct list_elem * e = list_begin(&t->children);
+  while(e!= list_end(&t->children);
+  {
+    struct child_process temp = list_entry(e, struct child_process, child_elem);
+    if(pid == temp->pid)
+        return temp;
+  }
+        return NULL;
+}
         
         
         
