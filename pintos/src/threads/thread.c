@@ -205,7 +205,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   child->waiting = false;
   child->exiting = false;	
   child->pid = t->tid;
-  list_push_back(&t->children, &child->childelem);
+  list_push_back(&t->children, &child->child_elem);
 	
   thread_unblock (t);
   old_level = intr_disable();
