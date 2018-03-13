@@ -727,13 +727,13 @@ int thread_get_load_avg(void)
 int thread_get_recent_cpu(void)
 {return 0;}
 
-bool thread_alive(int pid)
+bool thread_alive(struct thread *par)
 {
 	struct list_elem *e = list_begin(&all_list);
 	while(e != list_end(&all_list)
 	{
 		struct thread *t = list_entry(e, struct thread, allelem);
-		if(t->tid == pid)
+		if(t->parent->pid == par->pid)
 			return true;
 		e = list_next(e);
 	}
