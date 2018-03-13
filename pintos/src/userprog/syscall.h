@@ -2,6 +2,24 @@
 #define USERPROG_SYSCALL_H
 
 void syscall_init (void);
+bool valid (const void *vaddr);
+void sys_halt (void);
+void sys_exit(int status);
+pid_t sys_exec(const char * cmd_line);
+int sys_wait (pid_t pid);
+bool sys_create(const char * file, unsigned initial_size);
+bool sys_remove(const char *file);
+int sys_open(const char * file);
+struct file * get_file(int fd);
+int sys_filesize(int fd);
+int sys_read(int fd, void *buffer, unsigned size);
+int sys_write(int fd, const void * buffer, unsigned size);
+void sys_seek (int fd, unsigned position);
+unsigned sys_tell (int fd);
+void sys_close(int fd);
+void pull_args(struct intr_frame *f, int *arg, int n);
+int check_get_page(const void * vaddr);
+
 
 struct lock syscall_lock;
 
@@ -11,16 +29,5 @@ struct file_desc
   int fd;
   struct list_elem file_elem;
 };
-
-int process_add_file (struct file *f);
-struct file* process_get_file (int fd);
-
-static void syscall_handler (struct intr_frame *);
-int user_to_kernel_ptr(const void *vaddr);
-void get_arg (struct intr_frame *f, int *arg, int n);
-void check_valid_ptr (const void *vaddr);
-void check_valid_buffer (void* buffer, unsigned size);
-
-
 
 #endif /* userprog/syscall.h */
