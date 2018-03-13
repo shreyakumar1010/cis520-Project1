@@ -372,7 +372,7 @@ struct child_process * get_child(int id)
   struct list_elem * e = list_begin(&t->children);
   while(e != list_end(&t->children))
   {
-    struct child_process temp = list_entry(e, struct child_process, child_elem);
+    struct child_process *temp = list_entry(e, struct child_process, child_elem);
     
     e = list_next (e);
     
