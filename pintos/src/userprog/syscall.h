@@ -33,7 +33,7 @@ unsigned sys_tell (int fd);
 void sys_close(int fd);
 void pull_args(struct intr_frame *f, int *arg, int n);
 int check_get_page(const void * vaddr);
-struct child_process* get_child_process (int pid);
+struct child_process* get_child (int pid);
 
 
 struct lock syscall_lock;
