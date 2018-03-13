@@ -251,7 +251,7 @@ int sys_read(int fd, void *buffer, unsigned size)
   if(fd == STDIN_FILENO)
   {
     unsigned i = 0;
-    uint8_t *local_bufer = (uint8_t *) buffer;
+    uint8_t *local_buffer = (uint8_t *) buffer;
     while(i <size)
     {
       local_buffer[i] = input_getc();
