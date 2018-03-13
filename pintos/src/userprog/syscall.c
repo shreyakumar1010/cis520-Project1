@@ -29,7 +29,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   //printf ("system call!\n");
   //thread_exit ();
   int arguments[3];
-  if (!valid(const void*) f->esp))
+  if (!valid (void *) f->esp))
   {
     sys_exit(-1);
   }
@@ -260,7 +260,7 @@ int sys_read(int fd, void *buffer, unsigned size)
     lock_release(&syscall_lock);
     return size;
   }
-  if(f ! = NULL)
+  if(f != NULL)
   {
     int temp = file_read(f, buffer, size);
     lock_release(&syscall_lock);
@@ -280,7 +280,7 @@ int sys_write(int fd, const void * buffer, unsigned size)
     lock_release(&syscall_lock);
     return size;
   }
-  if (f ! = NULL)
+  if (f != NULL)
   {
     int temp = file_write(f, buffer, size);
     lock_release(&syscall_lock);
@@ -305,7 +305,7 @@ unsigned sys_tell (int fd)
 {
   lock_acquire(&syscall_lock);
   struct file *f = get_file(fd);
-  if(f!= NULL)
+  if(f != NULL)
   {
     off_t pos = file_tell(f);
     lock_release(&syscall_lock);
@@ -321,7 +321,7 @@ void sys_close(int fd)
   struct thread * t = thread_current();
   struct list_elem *next = list_begin(&t->files);
   struct list_elem *e = next;
-  while(e! = list_end(&t->files))
+  while(e != list_end(&t->files))
   {
     struct file_desc *f = list_entry(e, struct file_desc, file_elem);
     if(fd == f->fd)
@@ -369,7 +369,7 @@ struct child_process * get_child(int pid)
 {
   struct thread * t = thread_current();
   struct list_elem * e = list_begin(&t->children);
-  while(e!= list_end(&t->children);
+  while(e != list_end(&t->children);
   {
     struct child_process temp = list_entry(e, struct child_process, child_elem);
     if(pid == temp->pid)
