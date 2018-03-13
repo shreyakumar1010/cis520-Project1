@@ -14,8 +14,7 @@ struct child_process {
   bool waiting;
   bool exiting;
   int status;
-  struct lock wait_lock;
-  struct list_elem elem;
+  struct list_elem child_elem;
 };
 
 #endif /* userprog/process.h */
