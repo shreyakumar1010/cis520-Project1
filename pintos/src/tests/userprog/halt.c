@@ -6,7 +6,6 @@
 void
 test_main (void) 
 {
-  ASSERT(false);
   halt ();
   fail ("should have halted");
 }
