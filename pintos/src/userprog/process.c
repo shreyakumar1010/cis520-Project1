@@ -102,7 +102,7 @@ start_process (void *file_name_)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-   struct child * child = get_child(child_tid);
+   struct child_process * child = get_child(child_tid);
    if (child != NULL)
    {
       int status = child->status;
@@ -130,7 +130,7 @@ process_exit (void)
    struct list_elem *e = list_begin(&t->children);
    while(e! = list_end(&t->children)
    {
-      struct child * child = list_entry(e, struct child, child_elem);
+      struct child_process * child = list_entry(e, struct child, child_elem);
       list_remove(&child->child_elem);
       free(child);
       e = list_next(e);
