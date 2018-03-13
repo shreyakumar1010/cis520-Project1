@@ -233,7 +233,7 @@ struct file * get_file(int fd)
 int sys_filesize(int fd)
 {
   lock_acquire(&syscall_lock);
-  struct file *f get_file(fd);
+  struct file *f = get_file(fd);
   if(f != NULL)
   {
     int size = file_length(f);
@@ -369,7 +369,7 @@ struct child_process * get_child(int pid)
 {
   struct thread * t = thread_current();
   struct list_elem * e = list_begin(&t->children);
-  while(e != list_end(&t->children);
+  while(e != list_end(&t->children))
   {
     struct child_process temp = list_entry(e, struct child_process, child_elem);
     if(pid == temp->pid)
