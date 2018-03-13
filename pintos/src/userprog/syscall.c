@@ -84,7 +84,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       case SYS_FILESIZE:
       {
         pull_args(f, &arguments[0], 1);
-        f->eax = sys_filesize((const char *)arguments[0]);
+        f->eax = sys_filesize(arguments[0]);
         break;
       }
       case SYS_READ: 
@@ -169,7 +169,7 @@ pid_t sys_exec(const char * cmd_line)
   while(child->loadflag == false)
     barrier();
   if(!child->loadflag)
-    return -1;
+    return (-1);
   return pid;
 }
 
@@ -210,7 +210,7 @@ int sys_open(const char * file)
     return proc->fd;
   }
   lock_release(&syscall_lock);
-  return -1;
+  return (-1);
 }
 
 struct file * get_file(int fd)
@@ -241,7 +241,7 @@ int sys_filesize(int fd)
     return size;
   }
   lock_release(&syscall_lock);
-  return -1;
+  return (-1);
 }
 
 int sys_read(int fd, void *buffer, unsigned size)
@@ -267,7 +267,7 @@ int sys_read(int fd, void *buffer, unsigned size)
     return temp;
   }
   lock_release(&syscall_lock);
-  return -1;
+  return (-1);
 }
         
 int sys_write(int fd, const void * buffer, unsigned size)
@@ -287,7 +287,7 @@ int sys_write(int fd, const void * buffer, unsigned size)
     return temp;
   }
   lock_release(&syscall_lock);
-  return -1;
+  return (-1);
 }
 
  void sys_seek (int fd, unsigned position)
@@ -312,7 +312,7 @@ unsigned sys_tell (int fd)
     return pos;
   }
   lock_release(&syscall_lock);
-  return -1;
+  return (-1);
 }
         
 void sys_close(int fd)
@@ -362,8 +362,10 @@ int check_get_page(const void * vaddr)
   if(ptr != NULL)
     return (int) ptr;
   else 
+  {
     sys_exit(-1);
-    return -1;
+    return (-1);
+  }
 }
         
 struct child_process * get_child(int id)
