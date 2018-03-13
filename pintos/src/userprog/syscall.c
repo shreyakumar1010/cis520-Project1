@@ -31,7 +31,6 @@ syscall_handler (struct intr_frame *f UNUSED)
   int arguments[3];
   if (!valid ((const void *) f->esp))
   {
-    ASSERT(false);
     sys_exit(-1);
   }
   ASSERT(false);
