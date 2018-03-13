@@ -8,7 +8,6 @@
 int
 main (int argc, char *argv[]) 
 {
-   ASSERT(false);
   int i;
 
   test_name = "args";
