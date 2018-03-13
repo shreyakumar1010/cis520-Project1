@@ -21,7 +21,6 @@ syscall_init (void)
 {
   lock_init(&syscall_lock);
   intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
-  ASSERT(false);
 }
 
 static void
