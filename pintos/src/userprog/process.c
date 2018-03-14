@@ -104,7 +104,7 @@ start_process (void *file_name_)
    does nothing. */
 int
 process_wait (tid_t child_tid UNUSED) 
-{ ASSERT(false);
+{ 
    /*
    struct child_process * child = get_child(child_tid);
    if (child != NULL && !child->waiting)
@@ -134,9 +134,8 @@ process_wait (tid_t child_tid UNUSED)
   cp->waiting = true;
   while (cp->exiting == false)
     {     
-     
       barrier();
-      cp -> exiting == true;
+      ASSERT(false);
     }
   int status = cp->status;
    ASSERT(false);
