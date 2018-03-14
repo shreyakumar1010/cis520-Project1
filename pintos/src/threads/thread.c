@@ -1,5 +1,4 @@
 #include "threads/thread.h"
-#include <debug.h>
 #include <stddef.h>
 #include <random.h>
 #include <stdio.h>
@@ -8,12 +7,14 @@
 #include "threads/interrupt.h"
 #include "threads/intr-stubs.h"
 #include "threads/palloc.h"
+#include "threads/malloc.h"
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
-#include <stdlib.h>
+//#include "devices/timer.h"
 #ifdef USERPROG
 #include "userprog/process.h"
+#include "userprog/syscall.h"
 #endif
 
 /* Random value for struct thread's `magic' member.
