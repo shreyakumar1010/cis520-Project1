@@ -147,9 +147,8 @@ process_wait (tid_t child_tid UNUSED)
     }
   cp->waiting = true;
   while (cp->exiting == false)
-    {     
-	  printf("hi");
-      barrier();
+    {  
+      printf("hi");
     }
   int status = cp->status;
    list_remove(&cp->child_elem);
@@ -168,6 +167,7 @@ process_exit (void)
   uint32_t *pd;
    
    sys_close(-1);
+	ASSERT(false);
    struct list_elem *e = list_begin(&t->children);
    while(e != list_end(&t->children))
    {
