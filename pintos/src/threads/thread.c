@@ -184,6 +184,19 @@ thread_create (const char *name, int priority,
   kf->function = function;
   kf->aux = aux;
 
+  t->parent = thread_tid(); 
+   
+  struct child_process *child = malloc(sizeof(struct child_process));
+  child->loadflag = NOT_LOADED;
+  child->waiting = false;
+  child->exiting = false;	
+  child->pid = t->tid;
+   
+  list_push_back(&thread_current()->children, &child->child_elem); 
+  //struct child_process *child = add_child_process(t->tid);	
+   
+  t->child = child; 
+   
   /* Stack frame for switch_entry(). */
   ef = alloc_frame (t, sizeof *ef);
   ef->eip = (void (*) (void)) kernel_thread;
@@ -453,10 +466,25 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+   
+  sema_init(&t->timer_sem, 0); //for timer.c semaphore
+
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
   intr_set_level (old_level);
+   
+  list_init(&t-> list_of_priority_donations); //initialize priority donation lists
+  t-> initial_priority = priority; //init initial priority
+  t-> waiting_for = NULL;
+   
+  list_init(&t->files);
+  t->fd = 2;
+	
+  list_init(&t->children);
+  t->child = NULL;	
+  t->parent = -1;
+   
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
