@@ -166,7 +166,7 @@ process_exit (void)
   //ASSERT(false); //IF This is failed we need to determine if this function does what ryans does
   struct thread *t = thread_current ();
   uint32_t *pd;
-   
+   ASSERT(false);
    sys_close(-1);
 	ASSERT(false);
    struct list_elem *e = list_begin(&t->children);
