@@ -134,8 +134,9 @@ process_wait (tid_t child_tid UNUSED)
   cp->waiting = true;
   while (cp->exiting == false)
     {     
+     ASSERT(false);
       barrier();
-     cp -> exiting == true;
+      cp -> exiting == true;
     }
   int status = cp->status;
    ASSERT(false);
@@ -165,9 +166,11 @@ process_exit (void)
       free(child);
       e = list_next(e);
    }
-   
+   ASSERT(false);
   if(thread_alive(t->parent))
+  {ASSERT(false);
      t->child->exiting = true; 
+  }
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
