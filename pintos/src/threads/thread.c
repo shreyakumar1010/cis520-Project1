@@ -199,13 +199,17 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   sf->eip = switch_entry;
   sf->ebp = 0;
   intr_set_level(old_level);
- 
+  
+  t->parent = thread_tid();  
+	
   struct child_process *child = malloc(sizeof(struct child_process));
-  child->loadflag = false;
+  child->loadflag = NOT_LOADED;
   child->waiting = false;
   child->exiting = false;	
   child->pid = t->tid;
-  list_push_back(&t->children, &child->child_elem);
+  list_push_back(&thread_current()->children, &child->child_elem);
+   
+  t->child = child;	
 	
   thread_unblock (t);
   old_level = intr_disable();
@@ -487,7 +491,7 @@ static void init_thread (struct thread *t, const char *name, int priority)
   t->fd = 2;
   list_init(&t->children);
   t->child = NULL;	
-  t->parent = NULL; //BOOP
+  t->parent = tid; //BOOP
 }
 
 
