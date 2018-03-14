@@ -31,7 +31,7 @@ tid_t
 process_execute (const char *file_name) 
 {
   char *fn_copy;
-  char *args; 
+  
   tid_t tid;
 
   /* Make a copy of FILE_NAME.
@@ -41,6 +41,7 @@ process_execute (const char *file_name)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
    
+  char *args; 
   file_name = strtok_r((char *) file_name, " " , &args); 
 
   /* Create a new thread to execute FILE_NAME. */
@@ -57,11 +58,12 @@ start_process (void *file_name_)
 {
    ASSERT(false);
   char *file_name = file_name_;
-  char *args; 
+  
   struct intr_frame if_;
   bool success;
   struct thread * t = thread_current(); 
    
+  char *args;
   file_name = strtok_r(file_name, " ", &args);
 
   /* Initialize interrupt frame and load executable. */
@@ -72,9 +74,9 @@ start_process (void *file_name_)
    
   success = load (file_name, &if_.eip, &if_.esp, &args);
   if(success == true)
-     t->child->loadflag = true;
+     t->child->loadflag = LOAD_SUCCESS;
    else
-      t->child->loadflag = false;
+      t->child->loadflag = LOAD_FAIL;
      
   /* If load failed, quit. */
   palloc_free_page (file_name);
@@ -102,7 +104,7 @@ start_process (void *file_name_)
    does nothing. */
 int
 process_wait (tid_t child_tid UNUSED) 
-{
+{ /*
    struct child_process * child = get_child(child_tid);
    if (child != NULL && !child->waiting)
    {
@@ -117,17 +119,36 @@ process_wait (tid_t child_tid UNUSED)
    }
    else 
       return (-1);
+      */
+   struct child_process* cp = get_child_process(child_tid);
+  if (!cp)
+    {
+      return ERROR;
+    }
+  if (cp->wait)
+    {
+      return ERROR;
+    }
+  cp->wait = true;
+  while (!cp->exit)
+    {
+      barrier();
+    }
+  int status = cp->status;
+  remove_child_process(cp);
+return status;
+   
 }
 
 /* Free the current process's resources. */
 void
 process_exit (void)
 {
-   ASSERT(false);
+  ASSERT(false); //IF This is failed we need to determine if this function does what ryans does
   struct thread *t = thread_current ();
   uint32_t *pd;
    
-  sys_close(-1);
+   sys_close(-1);
    struct list_elem *e = list_begin(&t->children);
    while(e != list_end(&t->children))
    {
@@ -250,7 +271,7 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
 bool
 load (const char *file_name, void (**eip) (void), void **esp, char ** args) 
 {
-   ASSERT(false);
+  ASSERT(false);
   struct thread *t = thread_current ();
   struct Elf32_Ehdr ehdr;
   struct file *file = NULL;
