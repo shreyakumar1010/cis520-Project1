@@ -124,20 +124,18 @@ process_wait (tid_t child_tid UNUSED)
    struct child_process* cp = get_child(child_tid);
    
   if (!cp)
-    {
-     ASSERT(false);
+    {     
       return -1;
     }
   if (cp->waiting)
-    {
-     ASSERT(false);
+    {     
       return -1;
     }
   cp->waiting = true;
   while (!cp->exiting)
-    {
-     ASSERT(false);
+    {     
       barrier();
+     ASSERT(false);
     }
   int status = cp->status;
    ASSERT(false);
