@@ -8,10 +8,13 @@ int process_wait (tid_t);
 void process_exit (void);
 void process_activate (void);
 
+#define NOT_LOADED 0 //rwadd
+#define LOAD_SUCCESS 1
+#define LOAD_FAIL 2
 
 struct child_process {
   int pid;
-  bool loadflag;  //not loaded is false, loaded is true and load fail is null
+  int loadflag;  //not loaded is false, loaded is true and load fail is null
   bool waiting;
   bool exiting;
   int status;
