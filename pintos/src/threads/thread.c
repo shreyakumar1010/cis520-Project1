@@ -201,13 +201,15 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   intr_set_level(old_level);
   
   t->parent = thread_tid();  
+	/*
 	
   struct child_process *child = malloc(sizeof(struct child_process));
   child->loadflag = NOT_LOADED;
   child->waiting = false;
   child->exiting = false;	
   child->pid = t->tid;
-  list_push_back(&thread_current()->children, &child->child_elem);
+  list_push_back(&thread_current()->children, &child->child_elem); */
+  struct child_process *child = add_child_process(t->tid);	
    
   t->child = child;	
 	
@@ -489,9 +491,10 @@ static void init_thread (struct thread *t, const char *name, int priority)
 	
   list_init(&t->files);
   t->fd = 2;
+	
   list_init(&t->children);
   t->child = NULL;	
-  t->parent = tid; //BOOP
+  t->parent = -1; //BOOP
 }
 
 
@@ -731,15 +734,18 @@ int thread_get_load_avg(void)
 int thread_get_recent_cpu(void)
 {return 0;}
 
-bool thread_alive(struct thread *par)
+bool thread_alive (int pid) //This is a copy of ryans
 {
-	struct list_elem *e = list_begin(&all_list);
-	while(e != list_end(&all_list))
+  struct list_elem *e;
+
+  for (e = list_begin (&all_list); e != list_end (&all_list);
+       e = list_next (e))
+    {
+      struct thread *t = list_entry (e, struct thread, allelem);
+      if (t->tid == pid)
 	{
-		struct thread *t = list_entry(e, struct thread, allelem);
-		if(t->tid == par->tid)
-			return true;
-		e = list_next(e);
+	  return true;
 	}
-	return false;      
+    }
+  return false;
 }
