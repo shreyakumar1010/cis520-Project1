@@ -90,12 +90,14 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
       case SYS_FILESIZE:
       {
+        printf("filesize ");
         pull_args(f, &arguments[0], 1);
         f->eax = sys_filesize(arguments[0]);
         break;
       }
       case SYS_READ: 
       {
+        printf("read ");
         pull_args(f, &arguments[0], 3);
         char * local_buffer = (char *) arguments[1];
         int i = 0;
@@ -111,6 +113,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
       case SYS_WRITE:
       {
+        printf("write ");
         pull_args(f, &arguments[0], 3);
         char * local_buffer = (char *) arguments[1];
         int i = 0;
@@ -126,18 +129,21 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
       case SYS_SEEK: 
       {
+        printf("seek ");
         pull_args(f, &arguments[0], 2);
         sys_seek(arguments[0], (unsigned) arguments[1]);
         break;
       }
       case SYS_TELL:
       {
+        printf("tell");
         pull_args(f, &arguments[0], 1);
         f->eax = sys_tell(arguments[0]);
         break;
       }
       case SYS_CLOSE:
       {
+        printf("close ");
         pull_args(f, &arguments[0], 1);
         sys_close(arguments[0]);
         break;
