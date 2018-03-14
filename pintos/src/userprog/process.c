@@ -507,7 +507,7 @@ setup_stack (void **esp, const char * file_name, char ** args)
    }
    arguments[numArgs] = 0;
    
-   int index = (size_t) *esp % 8;
+   int index = (size_t) *esp % 4;
    if((void *)index != NULL)
    {
       *esp = *esp - sizeof(char *);
