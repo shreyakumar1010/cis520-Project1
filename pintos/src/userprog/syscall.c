@@ -320,8 +320,7 @@ void sys_close(int fd)
 {
   lock_acquire(&syscall_lock);
   struct thread * t = thread_current();
-  struct list_elem *next = list_begin(&t->files);
-  struct list_elem *e = next;
+  struct list_elem *e = list_begin(&t->files);
   while(e != list_end(&t->files))
   {
     struct file_desc *f = list_entry(e, struct file_desc, file_elem);
