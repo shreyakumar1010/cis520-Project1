@@ -122,22 +122,25 @@ process_wait (tid_t child_tid UNUSED)
       return (-1);
       */
    struct child_process* cp = get_child(child_tid);
-   ASSERT(false);
+   
   if (!cp)
     {
+     ASSERT(false);
       return -1;
     }
   if (cp->waiting)
     {
+     ASSERT(false);
       return -1;
     }
   cp->waiting = true;
   while (!cp->exiting)
     {
+     ASSERT(false);
       barrier();
     }
   int status = cp->status;
-   
+   ASSERT(false);
    list_remove(&cp->child_elem);
    free(cp);
   //remove_child_process(cp);
