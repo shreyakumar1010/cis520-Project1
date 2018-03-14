@@ -365,7 +365,8 @@ void pull_args(struct intr_frame *f, int *arg, int n)
   {
      ptr = (int *) f->esp + i +1;
      valid((const void *) ptr);
-    arg[i] = *ptr;
+     arg[i] = *ptr;
+     i++;
   }
 }
         
