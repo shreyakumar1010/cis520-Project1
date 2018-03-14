@@ -153,7 +153,7 @@ return status;
 void
 process_exit (void)
 {
-  ASSERT(false); //IF This is failed we need to determine if this function does what ryans does
+  //ASSERT(false); //IF This is failed we need to determine if this function does what ryans does
   struct thread *t = thread_current ();
   uint32_t *pd;
    
