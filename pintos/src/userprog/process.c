@@ -48,6 +48,7 @@ process_execute (const char *file_name)
   //tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
    //printf("%d", tid);
    //while(1);
+  start_process("echo");
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   return tid;
