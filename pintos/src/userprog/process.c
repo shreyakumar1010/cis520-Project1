@@ -576,7 +576,6 @@ setup_stack (void **esp, const char * file_name, char ** save_ptr)
 }
 */
   //ASSERT(false);
-  printf("FUCKFUCKFUCK");
   uint8_t *kpage;
   bool success = false;
 
@@ -592,7 +591,6 @@ setup_stack (void **esp, const char * file_name, char ** save_ptr)
 	  return success;
 	}
     }
-  printf("THISTHISTHIS");
   char *token;
   char **argv = malloc(DEFAULT_ARGV*sizeof(char *));
   int i, argc = 0, argv_size = DEFAULT_ARGV;
@@ -611,7 +609,6 @@ setup_stack (void **esp, const char * file_name, char ** save_ptr)
 	  argv = realloc(argv, argv_size*sizeof(char *));
 	}
       memcpy(*esp, token, strlen(token) + 1);
-     printf("CLASS");
     }
   argv[argc] = 0;
   // Align to word size (4 bytes)
@@ -640,7 +637,7 @@ setup_stack (void **esp, const char * file_name, char ** save_ptr)
   // Free argv
   free(argv);
  
-hex_dump(0, *esp, (int)((size_t) PHYS_BASE - (size_t) * esp), true);
+//hex_dump(0, *esp, (int)((size_t) PHYS_BASE - (size_t) * esp), true);
 
 return success;
 }
