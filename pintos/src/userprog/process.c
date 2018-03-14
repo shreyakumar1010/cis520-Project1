@@ -168,7 +168,7 @@ process_exit (void)
    }
    //ASSERT(false);
   if(thread_alive(t->parent))
-  {ASSERT(false);
+  {//ASSERT(false);
      t->child->exiting = true; 
   }
 
