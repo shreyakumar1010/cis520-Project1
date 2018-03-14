@@ -59,7 +59,7 @@ process_execute (const char *file_name)
 static void
 start_process (void *file_name_)
 {
-   ASSERT(false);
+   //ASSERT(false);
   char *file_name = file_name_;
   
   struct intr_frame if_;
