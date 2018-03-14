@@ -174,7 +174,10 @@ pid_t sys_exec(const char * cmd_line)
   pid_t pid = process_execute(cmd_line);
   struct child_process * child = get_child(pid);
   while(child->loadflag == NOT_LOADED)
+  {
+    printf("bye bitch");
     barrier();
+  }
   if(child->loadflag == LOAD_FAIL)
     return (-1);
   return pid;
