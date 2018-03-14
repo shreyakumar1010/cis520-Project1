@@ -180,7 +180,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
     return TID_ERROR;
 
   /* Initialize thread. */
-  init_thread (t, name, priority);
+  init_thread (t, name, 31);
   tid = t->tid = allocate_tid ();
   enum intr_level old_level = intr_disable();
 
@@ -201,6 +201,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   intr_set_level(old_level);
   
   t->parent = thread_tid();  
+  
 	
 	
   struct child_process *child = malloc(sizeof(struct child_process));
