@@ -45,7 +45,7 @@ process_execute (const char *file_name)
 //  file_name = strtok_r((char *) file_name, " " , &args); 
 
   /* Create a new thread to execute FILE_NAME. */
-   tid = thread_create (file_name, PRI_DEFAULT, start_process, file_name);
+   tid = thread_create (file_name, PRI_DEFAULT, start_process,  fn_copy);
    //printf("%d", tid);
    //while(1);
   //start_process("echo");
