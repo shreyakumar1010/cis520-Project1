@@ -129,7 +129,7 @@ process_wait (tid_t child_tid UNUSED)
    else 
       return (-1);
       */
-   while(1);
+  // while(1);
    
    struct child_process* cp = get_child(child_tid);
    
@@ -569,7 +569,7 @@ setup_stack (void **esp, const char * file_name, char ** save_ptr)
    return success;
 }
 */
-  ASSERT(false);
+  //ASSERT(false);
   uint8_t *kpage;
   bool success = false;
 
