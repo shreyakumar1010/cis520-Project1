@@ -180,7 +180,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
     return TID_ERROR;
 
   /* Initialize thread. */
-  init_thread (t, name, 31);
+  init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
   enum intr_level old_level = intr_disable();
 
@@ -219,7 +219,7 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
 	
   // Since we just created a new thread, it may be the new highest 
   //priority thread, so we need to check and then yield the cpu for it	
-  //yield_thread_if_no_longer_max(thread_current()); 
+  yield_thread_if_no_longer_max(thread_current()); 
   intr_set_level(old_level);
   return tid;
 }
