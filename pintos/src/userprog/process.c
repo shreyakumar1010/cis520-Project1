@@ -125,7 +125,7 @@ process_wait (tid_t child_tid UNUSED)
     {
       return -1;
     }
-  if (cp->wait)
+  if (cp->waiting)
     {
       return -1;
     }
@@ -161,7 +161,7 @@ process_exit (void)
       e = list_next(e);
    }
    
-  if(thread_alive(t->parent->tid))
+  if(thread_alive(t->parent))
      t->child->exiting = true; 
 
   /* Destroy the current process's page directory and switch back
