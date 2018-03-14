@@ -569,6 +569,7 @@ setup_stack (void **esp, const char * file_name, char ** save_ptr)
    return success;
 }
 */
+  ASSERT(false);
   uint8_t *kpage;
   bool success = false;
 
