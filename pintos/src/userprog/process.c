@@ -20,6 +20,10 @@
 #include "threads/vaddr.h"
 #include "threads/malloc.h"
 
+// Used for setup_stack
+#define WORD_SIZE 4
+#define DEFAULT_ARGV 2
+
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp, char** args);
 
