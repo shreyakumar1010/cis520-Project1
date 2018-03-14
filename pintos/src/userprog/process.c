@@ -42,10 +42,10 @@ process_execute (const char *file_name)
   strlcpy (fn_copy, file_name, PGSIZE);
    
   char *args; 
-  file_name = strtok_r((char *) file_name, " " , &args); 
+//  file_name = strtok_r((char *) file_name, " " , &args); 
 
   /* Create a new thread to execute FILE_NAME. */
-   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
+   tid = thread_create (file_name, PRI_DEFAULT, start_process, file_name);
    //printf("%d", tid);
    //while(1);
   //start_process("echo");
