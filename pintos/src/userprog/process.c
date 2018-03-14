@@ -121,6 +121,8 @@ process_wait (tid_t child_tid UNUSED)
    else 
       return (-1);
       */
+   while(1);
+   
    struct child_process* cp = get_child(child_tid);
    
   if (!cp)
@@ -137,11 +139,8 @@ process_wait (tid_t child_tid UNUSED)
       barrier();
     }
   int status = cp->status;
-   ASSERT(false);
    list_remove(&cp->child_elem);
-   ASSERT(false);
    free(cp);
-   ASSERT(false);
   //remove_child_process(cp);
 return status;
    
