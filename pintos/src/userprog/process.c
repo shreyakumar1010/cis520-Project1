@@ -633,6 +633,8 @@ setup_stack (void **esp, const char * file_name, char ** save_ptr)
   memcpy(*esp, &argv[argc], sizeof(void *));
   // Free argv
   free(argv);
+ 
+hex_dump(0, *esp, (int)((size_t) PHYS_BASE - (size_t) * esp), true);
 
 return success;
 }
