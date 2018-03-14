@@ -34,7 +34,7 @@ syscall_handler (struct intr_frame *f UNUSED)
     ASSERT(false);
     sys_exit(-1);
   }
-  //ASSERT(false);
+  printf("%d", *(int *) f->esp);
   switch (*(int *) f->esp)
   {
       case SYS_HALT:
