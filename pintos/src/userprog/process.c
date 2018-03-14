@@ -81,12 +81,11 @@ start_process (void *file_name_)
    
   success = load (file_name, &if_.eip, &if_.esp, &args);
   if(success == true)
-  { ASSERT(false);
+  { 
      t->child->loadflag = LOAD_SUCCESS;
   }
    else
    {
-	   ASSERT(false);
       t->child->loadflag = LOAD_FAIL;
    }
   
