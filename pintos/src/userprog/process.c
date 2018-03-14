@@ -30,6 +30,7 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp, char** a
 tid_t
 process_execute (const char *file_name) 
 {
+   ASSERT(false);
   char *fn_copy;
   
   tid_t tid;
