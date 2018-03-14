@@ -118,7 +118,7 @@ struct thread
   
     struct list files;
     int fd;
-    int file_desc;
+    //int file_desc;
    
   };
 
