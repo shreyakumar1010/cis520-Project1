@@ -132,7 +132,7 @@ process_wait (tid_t child_tid UNUSED)
       return -1;
     }
   cp->waiting = true;
-  while (!cp->exiting)
+  while (cp->exiting == false)
     {     
       barrier();     
     }
