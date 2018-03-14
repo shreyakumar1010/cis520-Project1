@@ -133,7 +133,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       case SYS_CLOSE:
       {
         pull_args(f, &arguments[0], 1);
-        close(arguments[0]);
+        sys_close(arguments[0]);
         break;
       }
   }
