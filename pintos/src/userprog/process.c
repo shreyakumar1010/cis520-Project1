@@ -134,13 +134,14 @@ process_wait (tid_t child_tid UNUSED)
   cp->waiting = true;
   while (!cp->exiting)
     {     
-      barrier();
-     ASSERT(false);
+      barrier();     
     }
   int status = cp->status;
    ASSERT(false);
    list_remove(&cp->child_elem);
+   ASSERT(false);
    free(cp);
+   ASSERT(false);
   //remove_child_process(cp);
 return status;
    
