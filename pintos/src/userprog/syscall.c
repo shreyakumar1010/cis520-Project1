@@ -44,12 +44,14 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
       case SYS_EXIT:
       {
+        ASSERT(false);
         pull_args(f, &arguments[0], 1);
         sys_exit(arguments[0]);
         break;
       }
       case SYS_EXEC:
       {
+        ASSERT(false);
         pull_args(f, &arguments[0], 1);
         arguments[0] = check_get_page((const void *) arguments[0]);
         f->eax = sys_exec((const char *) arguments[0]);
@@ -57,12 +59,14 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
       case SYS_WAIT:
       {
+        ASSERT(false);
         pull_args(f, &arguments[0], 1);
         f->eax = sys_wait(arguments[0]);
         break;
       }
       case SYS_CREATE:
       {
+        ASSERT(false);
         pull_args(f, &arguments[0], 2);
         arguments[0] = check_get_page((const void *) arguments[0]);
         f->eax = sys_create((const char *)arguments[0], (unsigned) arguments[1]);
@@ -71,6 +75,7 @@ syscall_handler (struct intr_frame *f UNUSED)
       }
       case SYS_REMOVE:
       {
+        ASSERT(false);
         pull_args(f, &arguments[0], 1);
         arguments[0] = check_get_page((const void *) arguments[0]);
         f->eax = sys_remove((const char *)arguments[0]);
