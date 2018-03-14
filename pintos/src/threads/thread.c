@@ -201,15 +201,15 @@ tid_t thread_create (const char *name, int priority, thread_func *function, void
   intr_set_level(old_level);
   
   t->parent = thread_tid();  
-	/*
+	
 	
   struct child_process *child = malloc(sizeof(struct child_process));
   child->loadflag = NOT_LOADED;
   child->waiting = false;
   child->exiting = false;	
   child->pid = t->tid;
-  list_push_back(&thread_current()->children, &child->child_elem); */
-  struct child_process *child = add_child_process(t->tid);	
+  list_push_back(&thread_current()->children, &child->child_elem); 
+  //struct child_process *child = add_child_process(t->tid);	
    
   t->child = child;	
 	
