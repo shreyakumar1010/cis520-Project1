@@ -166,7 +166,7 @@ process_exit (void)
       free(child);
       e = list_next(e);
    }
-   ASSERT(false);
+   //ASSERT(false);
   if(thread_alive(t->parent))
   {ASSERT(false);
      t->child->exiting = true; 
