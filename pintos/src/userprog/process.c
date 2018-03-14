@@ -133,7 +133,7 @@ process_wait (tid_t child_tid UNUSED)
    else 
       return (-1);
       */
-  // while(1);
+  while(1);
    
    struct child_process* cp = get_child(child_tid);
    
