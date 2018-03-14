@@ -148,6 +148,7 @@ process_wait (tid_t child_tid UNUSED)
   cp->waiting = true;
   while (cp->exiting == false)
     {     
+	  printf("hi");
       barrier();
     }
   int status = cp->status;
