@@ -392,7 +392,6 @@ load (const char *file_name, void (**eip) (void), void **esp, char ** args)
 
  done:
   /* We arrive here whether the load is successful or not. */
-	ASSERT(false);
   file_close (file);
 		ASSERT(false);
   return success;
