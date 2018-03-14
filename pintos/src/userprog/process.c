@@ -148,7 +148,8 @@ process_wait (tid_t child_tid UNUSED)
   cp->waiting = true;
   while (cp->exiting == false)
     {  
-      printf("hi");
+      barrier();
+	  printf("hi");
     }
   int status = cp->status;
    list_remove(&cp->child_elem);
