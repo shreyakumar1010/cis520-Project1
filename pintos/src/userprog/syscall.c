@@ -169,7 +169,7 @@ pid_t sys_exec(const char * cmd_line)
   struct child_process * child = get_child(pid);
   while(child->loadflag == NOT_LOADED)
     barrier();
-  if(!child->loadflag)
+  if(child->loadflag == LOAD_FAIL)
     return (-1);
   return pid;
 }
