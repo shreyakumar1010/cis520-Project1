@@ -504,7 +504,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 static bool
 setup_stack (void **esp, const char * file_name, char ** args) 
 {
-   ASSERT(false);
+   //ASSERT(false);
   uint8_t *kpage;
   bool success = false;
 
