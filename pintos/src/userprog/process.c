@@ -43,7 +43,7 @@ process_execute (const char *file_name)
    
   char *args; 
   file_name = strtok_r((char *) file_name, " " , &args); 
-ASSERT(false);
+
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
@@ -104,7 +104,7 @@ start_process (void *file_name_)
    does nothing. */
 int
 process_wait (tid_t child_tid UNUSED) 
-{ 
+{ ASSERT(false);
    /*
    struct child_process * child = get_child(child_tid);
    if (child != NULL && !child->waiting)
