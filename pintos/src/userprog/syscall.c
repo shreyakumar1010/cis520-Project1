@@ -33,7 +33,7 @@ syscall_handler (struct intr_frame *f UNUSED)
   {
     sys_exit(-1);
   }
-  ASSERT(false);
+  //ASSERT(false);
   switch (*(int *) f->esp)
   {
       case SYS_HALT:
