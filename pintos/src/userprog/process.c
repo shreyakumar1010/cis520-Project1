@@ -134,7 +134,7 @@ process_wait (tid_t child_tid UNUSED)
   cp->waiting = true;
   while (cp->exiting == false)
     {     
-     ASSERT(false);
+     
       barrier();
       cp -> exiting == true;
     }
