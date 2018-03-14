@@ -157,7 +157,7 @@ void sys_halt (void)
 void sys_exit(int status)
 {
   struct thread * t = thread_current();
-  if(thread_alive(t->parent->tid))
+  if(thread_alive(t->parent))
     t->child->status = status;
   printf("%s: exit(%d)\n", t->name, status);
   thread_exit();
