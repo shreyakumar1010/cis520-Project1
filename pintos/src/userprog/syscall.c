@@ -28,7 +28,6 @@ syscall_handler (struct intr_frame *f UNUSED)
 {
   //printf ("system call!\n");
   //thread_exit ();
-  ASSERT(false);
   int arguments[3];
   if (!valid ((const void *) f->esp))
   {
