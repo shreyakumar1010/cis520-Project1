@@ -120,22 +120,25 @@ process_wait (tid_t child_tid UNUSED)
    else 
       return (-1);
       */
-   struct child_process* cp = get_child_process(child_tid);
+   struct child_process* cp = get_child(child_tid);
   if (!cp)
     {
-      return ERROR;
+      return -1;
     }
   if (cp->wait)
     {
-      return ERROR;
+      return -1;
     }
-  cp->wait = true;
-  while (!cp->exit)
+  cp->waiting = true;
+  while (!cp->exiting)
     {
       barrier();
     }
   int status = cp->status;
-  remove_child_process(cp);
+   
+   list_remove(&cp->child_elem);
+   free(cp);
+  //remove_child_process(cp);
 return status;
    
 }
